@@ -1,0 +1,1 @@
+This plugin lets you visualizer Rerun data files (`.rrd`) inside the FiftyOne app.

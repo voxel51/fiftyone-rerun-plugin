@@ -1,0 +1,32 @@
+{
+  "name": "@voxel51/rerun-plugin",
+  "version": "1.0.0",
+  "main": "src/index.tsx",
+  "license": " Apache 2.0",
+  "fiftyone": {
+    "script": "dist/index.umd.js"
+  },
+  "scripts": {
+    "build": "bash -c 'source .env.dev && vite build'"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.13.0",
+    "@mui/styled-engine": "^5.12.3",
+    "@rollup/plugin-node-resolve": "^15.0.2",
+    "@vitejs/plugin-react": "^4.0.0",
+    "lodash": "^4.17.21",
+    "nodemon": "^2.0.19",
+    "react": "^18.2.0",
+    "react-is": "^18.2.0",
+    "react-markdown": "^8.0.7",
+    "styled-components": "^5.3.10",
+    "vite-plugin-externals": "^0.6.2"
+  },
+  "devDependencies": {
+    "vite": "^5.4.8"
+  },
+  "packageManager": "yarn@4.5.0+sha256.cc00dce5de4f68d11450519a0f69eadf2a1cbe5cc0d8e740bfac817a31d76874"
+}

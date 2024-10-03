@@ -1,0 +1,19 @@
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+!.yarnrc.yml
+
+# Yarn Cache and Unplugged (should be ignored)
+.yarn/cache
+.yarn/unplugged
+
+.env.dev
+
+.pnp.cjs
+.pnp.loader.mjs
+
+dist
