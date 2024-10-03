@@ -17,3 +17,5 @@
 .pnp.loader.mjs
 
 dist
+
+vite.config.js.timestamp-*
