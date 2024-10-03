@@ -1,12 +1,15 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { default as nodeResolve } from "@rollup/plugin-node-resolve";
-import path from "path";
+import nodeResolve from "@rollup/plugin-node-resolve";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
 import { viteExternalsPlugin } from "vite-plugin-externals";
+import pkg from "./package.json" assert { type: "json" };
 
 const { FIFTYONE_DIR } = process.env;
-const dir = path.resolve();
-const IS_DEV = process.env.IS_DEV === "true";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const dir = __dirname;
 
 function fiftyonePlugin() {
   if (!FIFTYONE_DIR) {
@@ -31,8 +34,6 @@ function fiftyonePlugin() {
   };
 }
 
-import pkgJson from "./package.json" assert { type: "json" };
-
 export default defineConfig({
   mode: "development",
   plugins: [
@@ -47,14 +48,16 @@ export default defineConfig({
       "@fiftyone/operators": "__foo__",
       "@fiftyone/components": "__foc__",
       "@fiftyone/utilities": "__fou__",
-      "@mui/material": "__mui__", // use mui from fiftyone
+      "@fiftyone/spaces": "__fosp__",
+      "@mui/material": "__mui__",
+      "styled-components": "__styled__",
     }),
   ],
   build: {
-    minify: IS_DEV ? false : true,
+    minify: true,
     lib: {
-      entry: path.join(dir, pkgJson.main),
-      name: pkgJson.name,
+      entry: join(dir, pkg.main),
+      name: pkg.name,
       fileName: (format) => `index.${format}.js`,
       formats: ["umd"],
     },

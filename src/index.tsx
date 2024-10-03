@@ -2,7 +2,7 @@ import { PluginComponentType, registerComponent } from "@fiftyone/plugins";
 import React from "react";
 
 const App = () => {
-  return <div>hi</div>;
+  return <div>test</div>;
 };
 
 const RerunFileDescriptor = {
@@ -22,8 +22,8 @@ registerComponent({
     // );
   },
   type: PluginComponentType.Panel,
-  panelOptions: {
-    surfaces: "modal",
-    helpMarkdown: `Rereun viewer for FiftyOne`,
-  },
+    panelOptions: {
+      surfaces: "modal",
+      helpMarkdown: `Rereun viewer for FiftyOne`,
+    },
 });

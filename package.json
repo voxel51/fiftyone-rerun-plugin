@@ -1,33 +1,50 @@
 {
-  "name": "@voxel51/rerun-plugin",
+  "name": "@fiftyone/rerun-plugin",
   "version": "1.0.0",
   "main": "src/index.tsx",
   "type": "module",
-  "license": " Apache 2.0",
+  "license": "MIT",
   "fiftyone": {
     "script": "dist/index.umd.js"
   },
   "scripts": {
-    "build": "bash -c 'source .env.dev && vite build'"
+    "dev": "nodemon --watch ./src --ext js,jsx,ts,tsx --exec 'yarn build'",
+    "build": "bash -c '. .env.dev && vite build'",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.0",
-    "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.11.16",
-    "@mui/material": "^5.13.0",
-    "@mui/styled-engine": "^5.12.3",
-    "@rollup/plugin-node-resolve": "^15.0.2",
-    "@vitejs/plugin-react": "^4.0.0",
-    "lodash": "^4.17.21",
+    "@heroicons/react": "^2.1.5",
+    "@monaco-editor/react": "^4.6.0",
+    "@mui/material": "^5.16.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@vitejs/plugin-react": "^4.3.1",
     "nodemon": "^2.0.19",
     "react": "^18.2.0",
-    "react-is": "^18.2.0",
-    "react-markdown": "^8.0.7",
-    "styled-components": "^5.3.10",
+    "react-dom": "^18.2.0",
+    "react-syntax-highlighter": "^15.5.0",
     "vite-plugin-externals": "^0.6.2"
   },
   "devDependencies": {
-    "vite": "^5.4.8"
+    "vite": "^3.2.4"
   },
-  "packageManager": "yarn@4.5.0+sha256.cc00dce5de4f68d11450519a0f69eadf2a1cbe5cc0d8e740bfac817a31d76874"
+  "resolutions": {
+    "@fiftyone/fiftyone": "portal:../fiftyone/app",
+    "@fiftyone/aggregations": "portal:../fiftyone/app/packages/aggregations",
+    "@fiftyone/app": "portal:../fiftyone/app/packages/app",
+    "@fiftyone/components": "portal:../fiftyone/app/packages/components",
+    "@fiftyone/core": "portal:../fiftyone/app/packages/core",
+    "@fiftyone/dataset": "portal:../fiftyone/app/packages/dataset",
+    "FiftyOne": "portal:../fiftyone/app/packages/desktop",
+    "@fiftyone/embeddings": "portal:../fiftyone/app/packages/embeddings",
+    "@fiftyone/flashlight": "portal:../fiftyone/app/packages/flashlight",
+    "@fiftyone/looker": "portal:../fiftyone/app/packages/looker",
+    "@fiftyone/looker-3d": "portal:../fiftyone/app/packages/looker-3d",
+    "@fiftyone/map": "portal:../fiftyone/app/packages/map",
+    "@fiftyone/plugins": "portal:../fiftyone/app/packages/plugins",
+    "@fiftyone/relay": "portal:../fiftyone/app/packages/relay",
+    "@fiftyone/spaces": "portal:../fiftyone/app/packages/spaces",
+    "@fiftyone/state": "portal:../fiftyone/app/packages/state",
+    "@fiftyone/utilities": "portal:../fiftyone/app/packages/utilities"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

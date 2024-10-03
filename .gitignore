@@ -19,3 +19,6 @@
 dist
 
 vite.config.js.timestamp-*
+node_modules
+
+__pycache__
