@@ -54,7 +54,7 @@ export default defineConfig({
     }),
   ],
   build: {
-    minify: false,
+    minify: true,
     lib: {
       entry: join(dir, pkg.main),
       name: pkg.name,
