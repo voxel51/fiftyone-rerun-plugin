@@ -1,29 +1,21 @@
-import { PluginComponentType, registerComponent } from "@fiftyone/plugins";
-import React from "react";
+import * as fop from "@fiftyone/plugins";
+import * as futil from "@fiftyone/utilities";
+import { RerunFileDescriptor, RerunViewer } from "./RerunPanel";
 
-const App = () => {
-  return <div>test</div>;
-};
-
-const RerunFileDescriptor = {
-  EMBEDDED_DOC_TYPE: "fiftyone.utils.rerun.RrdFile",
-};
-
-registerComponent({
+fop.registerComponent({
   name: "Rerun",
   label: "Rerun",
-  component: App,
+  component: RerunViewer,
   activator: (ctx) => {
     // only activate if schema has rrd file
-    return true;
-    // return doesSchemaContainEmbeddedDocType(
-    //   ctx.schema,
-    //   RerunFileDescriptor.EMBEDDED_DOC_TYPE
-    // );
+    return futil.doesSchemaContainEmbeddedDocType(
+      ctx.schema,
+      RerunFileDescriptor.EMBEDDED_DOC_TYPE
+    );
   },
-  type: PluginComponentType.Panel,
-    panelOptions: {
-      surfaces: "modal",
-      helpMarkdown: `Rereun viewer for FiftyOne`,
-    },
+  type: fop.PluginComponentType.Panel,
+  panelOptions: {
+    surfaces: "modal",
+    helpMarkdown: `Rereun viewer for FiftyOne`,
+  },
 });
