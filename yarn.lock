@@ -652,11 +652,14 @@ __metadata:
     "@fiftyone/utilities": "portal:../../fiftyone/app/packages/utilities"
     "@rerun-io/web-viewer": "npm:^0.18.2"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
+    "@types/node": "npm:^22.7.6"
     "@vitejs/plugin-react": "npm:^4.3.2"
+    "@voxel51/fiftyone-js-plugin-build": "npm:^1.0.15"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     recoil: "npm:^0.7.7"
-    vite: "npm:^5.4.8"
+    typescript: "npm:^5.6.3"
+    vite: "npm:^5.4.9"
     vite-plugin-externalize-deps: "npm:^0.8.0"
     vite-plugin-top-level-await: "npm:^1.4.4"
     vite-plugin-wasm: "npm:^3.3.0"
@@ -1463,6 +1466,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^22.7.6":
+  version: 22.7.7
+  resolution: "@types/node@npm:22.7.7"
+  dependencies:
+    undici-types: "npm:~6.19.2"
+  checksum: 10c0/07268a1e990ad9d9b1865092881317ea679a46eb6706d83a8874eec75fdddae6cfd6452e4e68b651561183e2a8f8548276f3155744bc402c2545978c19b70d65
+  languageName: node
+  linkType: hard
+
 "@types/pako@npm:^2.0.0":
   version: 2.0.3
   resolution: "@types/pako@npm:2.0.3"
@@ -1536,6 +1548,19 @@ __metadata:
   peerDependencies:
     vite: ^4.2.0 || ^5.0.0
   checksum: 10c0/945f357175bea45031dc98d379e63cd34cd60a51b3dd394b66138696625ac8b55bc913a23481f78bbe15ca558c21ea4699b936abbd8242003d7c0ad51d298727
+  languageName: node
+  linkType: hard
+
+"@voxel51/fiftyone-js-plugin-build@npm:^1.0.15":
+  version: 1.0.15
+  resolution: "@voxel51/fiftyone-js-plugin-build@npm:1.0.15"
+  peerDependencies:
+    "@rollup/plugin-node-resolve": ^15
+    "@types/node": "*"
+    "@vitejs/plugin-react": ^4
+    vite: ^5
+    vite-plugin-externalize-deps: ^0.8
+  checksum: 10c0/b02535bd291e0347c6b07907e068739cfa47c17bf3ae8c980bffd4cd36a3df684a5842424140c655ded277cd13577e86aa55432f14cb3782e712022ac152093c
   languageName: node
   linkType: hard
 
@@ -3875,12 +3900,39 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:^5.6.3":
+  version: 5.6.3
+  resolution: "typescript@npm:5.6.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/44f61d3fb15c35359bc60399cb8127c30bae554cd555b8e2b46d68fa79d680354b83320ad419ff1b81a0bdf324197b29affe6cc28988cd6a74d4ac60c94f9799
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A^5.6.3#optional!builtin<compat/typescript>":
+  version: 5.6.3
+  resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=8c6c40"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/7c9d2e07c81226d60435939618c91ec2ff0b75fbfa106eec3430f0fcf93a584bc6c73176676f532d78c3594fe28a54b36eb40b3d75593071a7ec91301533ace7
+  languageName: node
+  linkType: hard
+
 "ua-parser-js@npm:^1.0.35":
   version: 1.0.39
   resolution: "ua-parser-js@npm:1.0.39"
   bin:
     ua-parser-js: script/cli.js
   checksum: 10c0/c6452b0c683000f10975cb0a7e74cb1119ea95d4522ae85f396fa53b0b17884358a24ffdd86a66030c6b2981bdc502109a618c79fdaa217ee9032c9e46fcc78a
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~6.19.2":
+  version: 6.19.8
+  resolution: "undici-types@npm:6.19.8"
+  checksum: 10c0/078afa5990fba110f6824823ace86073b4638f1d5112ee26e790155f481f2a868cc3e0615505b6f4282bdf74a3d8caad715fd809e870c2bb0704e3ea6082f344
   languageName: node
   linkType: hard
 
@@ -3974,9 +4026,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^5.4.8":
-  version: 5.4.8
-  resolution: "vite@npm:5.4.8"
+"vite@npm:^5.4.9":
+  version: 5.4.9
+  resolution: "vite@npm:5.4.9"
   dependencies:
     esbuild: "npm:^0.21.3"
     fsevents: "npm:~2.3.3"
@@ -4013,7 +4065,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/af70af6d6316a3af71f44ebe3ab343bd66450d4157af73af3b32239e1b6ec43ff6f651d7cc4193b21ed3bff2e9356a3de9e96aee53857f39922e4a2d9fad75a1
+  checksum: 10c0/e9c59f2c639047e37c79bbbb151c7a55a3dc27932957cf4cf0447ee0bdcc1ddfd9b1fb3ba0465371c01ba3616d62561327855794c2d652213c3a10a32e6d369d
   languageName: node
   linkType: hard
 
