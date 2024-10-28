@@ -39,14 +39,13 @@ NUSCENES_DATA_DIR: Final = pathlib.Path(
 )
 
 # this directory stores RRD files, PCD files, FO3D files, and orthographic projection images
-DATA_DIR: Final = pathlib.Path("/Users/sashankaryal/fiftyone/notebooks/features/data")
+DATA_DIR: Final = pathlib.Path(__file__).parent / "data"
 
 nusc = nuscenes.NuScenes(version="v1.0-mini", dataroot=NUSCENES_DATA_DIR, verbose=True)
 
 # --- RERUN ---
 
-# currently need to calculate the color for lidar/radar points manually
-# see https://github.com/rerun-io/rerun/issues/4409
+# used to calculate the color for lidar/radar in rerun and radar in FiftyOne
 cmap = matplotlib.colormaps["turbo_r"]
 norm = matplotlib.colors.Normalize(
     vmin=3.0,
@@ -488,7 +487,11 @@ def setup_fiftyone():
     print("Computing orthographic projects for the grid...")
     orthographic_images_output_dir = str(DATA_DIR / "orthographic_images")
     fou3d.compute_orthographic_projection_images(
-        dataset, (-1, 512), orthographic_images_output_dir, in_group_slice="3D"
+        dataset,
+        (-1, 512),
+        orthographic_images_output_dir,
+        in_group_slice="3D",
+        shading_mode="rgb",
     )
 
 
