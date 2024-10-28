@@ -650,16 +650,16 @@ __metadata:
     "@fiftyone/relay": "portal:../../fiftyone/app/packages/relay"
     "@fiftyone/state": "portal:../../fiftyone/app/packages/state"
     "@fiftyone/utilities": "portal:../../fiftyone/app/packages/utilities"
-    "@rerun-io/web-viewer": "npm:^0.18.2"
+    "@rerun-io/web-viewer": "npm:^0.19.0"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
     "@types/node": "npm:^22.7.6"
-    "@vitejs/plugin-react": "npm:^4.3.2"
-    "@voxel51/fiftyone-js-plugin-build": "npm:^1.0.21"
+    "@vitejs/plugin-react": "npm:^4.3.3"
+    "@voxel51/fiftyone-js-plugin-build": "npm:^1.0.22"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     recoil: "npm:^0.7.7"
     typescript: "npm:^5.6.3"
-    vite: "npm:^5.4.9"
+    vite: "npm:^5.4.10"
     vite-plugin-externalize-deps: "npm:^0.8.0"
     vite-plugin-top-level-await: "npm:^1.4.4"
     vite-plugin-wasm: "npm:^3.3.0"
@@ -1088,10 +1088,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rerun-io/web-viewer@npm:^0.18.2":
-  version: 0.18.2
-  resolution: "@rerun-io/web-viewer@npm:0.18.2"
-  checksum: 10c0/03c94b4a04ddd08c04ecf14f17f6d818609d0b56985ddae521fced66b6415e4a1ac744c0f3b7ee0063af97712020979a755e85b988b5f329f2300940a7898c28
+"@rerun-io/web-viewer@npm:^0.19.0":
+  version: 0.19.0
+  resolution: "@rerun-io/web-viewer@npm:0.19.0"
+  checksum: 10c0/33d738515b1eb00e8814a1b775112e2b9d348d6831350b6e8e8557d0be8ecad46e47fbc516fc83bf48240bf4fad4169f071df8e43f5edbf27e0baaeea7af4eeb
   languageName: node
   linkType: hard
 
@@ -1536,9 +1536,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-react@npm:^4.3.2":
-  version: 4.3.2
-  resolution: "@vitejs/plugin-react@npm:4.3.2"
+"@vitejs/plugin-react@npm:^4.3.3":
+  version: 4.3.3
+  resolution: "@vitejs/plugin-react@npm:4.3.3"
   dependencies:
     "@babel/core": "npm:^7.25.2"
     "@babel/plugin-transform-react-jsx-self": "npm:^7.24.7"
@@ -1547,20 +1547,20 @@ __metadata:
     react-refresh: "npm:^0.14.2"
   peerDependencies:
     vite: ^4.2.0 || ^5.0.0
-  checksum: 10c0/945f357175bea45031dc98d379e63cd34cd60a51b3dd394b66138696625ac8b55bc913a23481f78bbe15ca558c21ea4699b936abbd8242003d7c0ad51d298727
+  checksum: 10c0/b370c25fb47bb96f0cc51f3aadbbcfce54e40f95a4de67cf932e5ec526f139648da703725c6ea2c71a1b525eb3dd6e3e8ff877da143627cd2575de5ec4f00aa3
   languageName: node
   linkType: hard
 
-"@voxel51/fiftyone-js-plugin-build@npm:^1.0.21":
-  version: 1.0.21
-  resolution: "@voxel51/fiftyone-js-plugin-build@npm:1.0.21"
+"@voxel51/fiftyone-js-plugin-build@npm:^1.0.22":
+  version: 1.0.22
+  resolution: "@voxel51/fiftyone-js-plugin-build@npm:1.0.22"
   peerDependencies:
     "@rollup/plugin-node-resolve": ^15
     "@types/node": "*"
     "@vitejs/plugin-react": ^4
     vite: ^5
     vite-plugin-externalize-deps: ^0.8
-  checksum: 10c0/ac4a482b8ac545f2942da14ac5bce1bb2f55cce71c8db4703225f7e4ae336dd357afb55bc5847d254b9567168f586653f46689fb0cb41a061edc5a47e468c6d4
+  checksum: 10c0/4d28f7942723d28bec3cd3b8fc03cde8377a7d44b64a02cf8e387518c2a825991b654094abf58ba3d2da924e3a4154f10e0c78f68cfc7f6f70fc18a2858f2b82
   languageName: node
   linkType: hard
 
@@ -4026,9 +4026,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^5.4.9":
-  version: 5.4.9
-  resolution: "vite@npm:5.4.9"
+"vite@npm:^5.4.10":
+  version: 5.4.10
+  resolution: "vite@npm:5.4.10"
   dependencies:
     esbuild: "npm:^0.21.3"
     fsevents: "npm:~2.3.3"
@@ -4065,7 +4065,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/e9c59f2c639047e37c79bbbb151c7a55a3dc27932957cf4cf0447ee0bdcc1ddfd9b1fb3ba0465371c01ba3616d62561327855794c2d652213c3a10a32e6d369d
+  checksum: 10c0/4ef4807d2fd166a920de244dbcec791ba8a903b017a7d8e9f9b4ac40d23f8152c1100610583d08f542b47ca617a0505cfc5f8407377d610599d58296996691ed
   languageName: node
   linkType: hard
 
