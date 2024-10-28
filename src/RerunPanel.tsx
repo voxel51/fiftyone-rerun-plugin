@@ -1,9 +1,9 @@
 import * as fos from "@fiftyone/state";
 import { getFieldsWithEmbeddedDocType } from "@fiftyone/utilities";
-import * as RerunWebViewer from "@rerun-io/web-viewer";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useMemo } from "react";
 import { useRecoilValue } from "recoil";
 import { CustomErrorBoundary } from "./CustomErrorBoundary";
+import { Rrd_V_0_19 } from "./RerunV19_0";
 
 export const RerunFileDescriptor = {
   EMBEDDED_DOC_TYPE: "fiftyone.utils.rerun.RrdFile",
@@ -15,45 +15,17 @@ type RerunFieldDescriptor = {
   version: string;
 };
 
-const Rrd_V_0_18_2 = React.memo(({ url }: { url: string }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const viewerRef = useRef<RerunWebViewer.WebViewer>();
-
-  useEffect(() => {
-    if (!containerRef.current) {
-      return;
-    }
-
-    (async () => {
-      viewerRef.current = new RerunWebViewer.WebViewer();
-      await viewerRef.current.start(url, containerRef.current, {
-        render_backend: "webgpu",
-        allow_fullscreen: false,
-        hide_welcome_screen: true,
-        width: "100%",
-        height: "100%",
-      });
-    })();
-
-    return () => {
-      viewerRef.current?.stop();
-    };
-  }, [url]);
-
-  return <div ref={containerRef} style={{ height: "100%", width: "100%" }} />;
-});
-
 const RrdRenderer = React.memo(
   ({ url, version }: { url: string; version: string }) => {
     switch (version) {
-      case "0.18.2":
+      // todo: implement versioned renderers
       default:
-        return <Rrd_V_0_18_2 url={url} />;
+        return <Rrd_V_0_19 url={url} />;
     }
   }
 );
 
-export const RerunViewer = () => {
+export const RerunViewer = React.memo(() => {
   const currentSample = useRecoilValue(fos.modalSample);
 
   const schema = useRecoilValue(
@@ -98,4 +70,4 @@ export const RerunViewer = () => {
       <RrdRenderer url={rrdParams.url} version={rrdParams.version} />
     </CustomErrorBoundary>
   );
-};
+});
