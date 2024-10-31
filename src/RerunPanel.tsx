@@ -47,7 +47,7 @@ export const RerunViewer = React.memo(() => {
     const url = fos.getSampleSrc(rrdFilePath);
     return {
       url,
-      version: filePathAndVersion.version,
+      version: filePathAndVersion?.version,
     };
   }, [currentSample, rerunFieldPath]);
 
