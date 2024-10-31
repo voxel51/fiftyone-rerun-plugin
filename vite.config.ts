@@ -8,7 +8,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const dir = __dirname;
 
-const myPluginThirdPartyDependencies = [/^@rerun-io.*/, "lru-cache"];
+// note: enable these again when we use rerun webviewer and not iframe
+const myPluginThirdPartyDependencies = [
+  // /^@rerun-io.*/,
+  // "lru-cache"
+];
 
 export default defineConfig(dir, {
   forceBundleDependencies: myPluginThirdPartyDependencies,
