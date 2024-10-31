@@ -655,6 +655,7 @@ __metadata:
     "@types/node": "npm:^22.7.6"
     "@vitejs/plugin-react": "npm:^4.3.3"
     "@voxel51/fiftyone-js-plugin-build": "npm:^1.0.22"
+    lru-cache: "npm:^11.0.1"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     recoil: "npm:^0.7.7"
