@@ -3,7 +3,7 @@ import { getFieldsWithEmbeddedDocType } from "@fiftyone/utilities";
 import React, { useMemo } from "react";
 import { useRecoilValue } from "recoil";
 import { CustomErrorBoundary } from "./CustomErrorBoundary";
-import { Rrd_V_0_19 } from "./RerunV19_0";
+import { RrdIframeRenderer } from "./RrdIframeRenderer";
 
 export const RerunFileDescriptor = {
   EMBEDDED_DOC_TYPE: "fiftyone.utils.rerun.RrdFile",
@@ -14,16 +14,6 @@ type RerunFieldDescriptor = {
   filepath: string;
   version: string;
 };
-
-const RrdRenderer = React.memo(
-  ({ url, version }: { url: string; version: string }) => {
-    switch (version) {
-      // todo: implement versioned renderers
-      default:
-        return <Rrd_V_0_19 url={url} />;
-    }
-  }
-);
 
 export const RerunViewer = React.memo(() => {
   const currentSample = useRecoilValue(fos.modalSample);
@@ -62,12 +52,14 @@ export const RerunViewer = React.memo(() => {
   }, [currentSample, rerunFieldPath]);
 
   if (!rrdParams) {
-    return <div>Loading</div>;
+    return <div>Loading...</div>;
   }
 
   return (
     <CustomErrorBoundary>
-      <RrdRenderer url={rrdParams.url} version={rrdParams.version} />
+      {/* use iframe until versioned web viewer renderer is more stable, note: vite will not bundle any rerun deps */}
+      {/* <RrdWebViewerRenderer url={rrdParams.url} version={rrdParams.version} /> */}
+      <RrdIframeRenderer url={rrdParams.url} />
     </CustomErrorBoundary>
   );
 });
