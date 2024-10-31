@@ -41,7 +41,6 @@ DATA_DIR: Final = pathlib.Path(__file__).parent / "data"
 
 nusc = nuscenes.NuScenes(version="v1.0-mini", dataroot=NUSCENES_DATA_DIR, verbose=True)
 
-# --- RERUN ---
 
 # used to calculate the color for lidar/radar in rerun and radar in FiftyOne
 cmap = matplotlib.colormaps["turbo_r"]
@@ -49,6 +48,8 @@ norm = matplotlib.colors.Normalize(
     vmin=3.0,
     vmax=75.0,
 )
+
+# --- RERUN ---
 
 
 def log_lidar_and_ego_pose(
