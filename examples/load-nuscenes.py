@@ -548,7 +548,7 @@ def setup_fiftyone():
                 modality = data["sensor_modality"]
                 filepath = NUSCENES_DATA_DIR / data["filename"]
 
-                if modality == "lidar":
+                if modality == "lidar" or modality == "radar":
                     this_token = my_sample["data"][sensor]
                     filepath = write_pcd_file(this_token, modality)
                     pcds[sensor] = filepath
