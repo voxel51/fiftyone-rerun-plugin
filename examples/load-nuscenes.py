@@ -15,7 +15,6 @@ import rerun.blueprint as rrb
 from fiftyone.utils.rerun import RrdFile
 from nuscenes import nuscenes
 from nuscenes.lidarseg.lidarseg_utils import paint_points_label
-from nuscenes.scripts.export_poses import derive_latlon
 from nuscenes.utils.color_map import get_colormap
 from nuscenes.utils.data_classes import LidarPointCloud, RadarPointCloud
 from nuscenes.utils.geometry_utils import BoxVisibility, box_in_image, view_points
@@ -194,6 +193,28 @@ def log_front_camera(
         )
 
 
+def log_sensor_calibration(
+    sample_data: dict[str, Any], nusc: nuscenes.NuScenes, stream: rr.RecordingStream
+) -> None:
+    """Log sensor calibration (pinhole camera, sensor poses, etc.)."""
+    sensor_name = sample_data["channel"]
+    calibrated_sensor_token = sample_data["calibrated_sensor_token"]
+    calibrated_sensor = nusc.get("calibrated_sensor", calibrated_sensor_token)
+    rotation_xyzw = np.roll(
+        calibrated_sensor["rotation"], shift=-1
+    )  # go from wxyz to xyzw
+    stream.log(
+        f"world/ego_vehicle/{sensor_name}",
+        rr.Transform3D(
+            translation=calibrated_sensor["translation"],
+            rotation=rr.Quaternion(xyzw=rotation_xyzw),
+            from_parent=False,
+            axis_length=0.0,
+        ),
+        static=True,
+    )
+
+
 def log_nuscenes(
     scene_name: str,
     max_time_sec: float,
@@ -213,6 +234,7 @@ def log_nuscenes(
 
     for sample_data_token in first_sample["data"].values():
         sample_data = nusc.get("sample_data", sample_data_token)
+        log_sensor_calibration(sample_data, nusc, stream)
 
         if sample_data["sensor_modality"] == "lidar":
             first_lidar_token = sample_data_token
@@ -504,8 +526,7 @@ def main():
     parser.add_argument(
         "--fiftyone",
         action="store_true",
-        default=True,
-        help="Setup fiftyone dataset (default: True)",
+        help="Setup fiftyone dataset",
     )
     args = parser.parse_args()
 
