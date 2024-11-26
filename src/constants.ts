@@ -1,0 +1,1 @@
+export const MAX_RRDS_IN_CACHE = 3;
