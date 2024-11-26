@@ -573,7 +573,7 @@ __metadata:
     "@emotion/react": "npm:^11.10.4"
     "@emotion/styled": "npm:^11.10.4"
     "@fiftyone/state": "npm:*"
-    "@mui/icons-material": "npm:^5.10.2"
+    "@mui/icons-material": "npm:^5.16.7"
     "@mui/material": "npm:^5.9.0"
     "@react-spring/web": "npm:^9.7.3"
     "@textea/json-viewer": "npm:^3.4.1"
@@ -600,7 +600,6 @@ __metadata:
     "@ungap/event-target": "npm:^0.2.2"
     "@xmldom/xmldom": "npm:^0.8.6"
     copy-to-clipboard: "npm:^3.3.1"
-    fast-png: "npm:^6.1.0"
     immutable: "npm:^4.0.0-rc.12"
     lodash: "npm:^4.17.21"
     lru-cache: "npm:^11.0.1"
@@ -650,11 +649,11 @@ __metadata:
     "@fiftyone/relay": "portal:../../fiftyone/app/packages/relay"
     "@fiftyone/state": "portal:../../fiftyone/app/packages/state"
     "@fiftyone/utilities": "portal:../../fiftyone/app/packages/utilities"
-    "@rerun-io/web-viewer": "npm:^0.19.0"
+    "@rerun-io/web-viewer": "npm:^0.20.1"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
     "@types/node": "npm:^22.7.6"
     "@vitejs/plugin-react": "npm:^4.3.3"
-    "@voxel51/fiftyone-js-plugin-build": "npm:^1.0.22"
+    "@voxel51/fiftyone-js-plugin-build": "npm:^2.0.0"
     lru-cache: "npm:^11.0.1"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
@@ -833,7 +832,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/icons-material@npm:^5.10.2":
+"@mui/icons-material@npm:^5.16.7":
   version: 5.16.7
   resolution: "@mui/icons-material@npm:5.16.7"
   dependencies:
@@ -1089,10 +1088,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rerun-io/web-viewer@npm:^0.19.0":
-  version: 0.19.0
-  resolution: "@rerun-io/web-viewer@npm:0.19.0"
-  checksum: 10c0/33d738515b1eb00e8814a1b775112e2b9d348d6831350b6e8e8557d0be8ecad46e47fbc516fc83bf48240bf4fad4169f071df8e43f5edbf27e0baaeea7af4eeb
+"@rerun-io/web-viewer@npm:^0.20.1":
+  version: 0.20.1
+  resolution: "@rerun-io/web-viewer@npm:0.20.1"
+  checksum: 10c0/181f303d6e909b0bae215d427c1c0a2a90e12861db7215f34c832d96b8d936da39fe2e1f28fbafbeab1ae2c8c0ad79192e3a7befbb58817a98476ea368a7c544
   languageName: node
   linkType: hard
 
@@ -1476,13 +1475,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/pako@npm:^2.0.0":
-  version: 2.0.3
-  resolution: "@types/pako@npm:2.0.3"
-  checksum: 10c0/45119ac3c4e8a77317c35493327039b74e333562f06ce038048228918d8ddfaa7958125aab960d1565b3861046022754c414dba1eecb210c44a32c415956bee2
-  languageName: node
-  linkType: hard
-
 "@types/parse-json@npm:^4.0.0":
   version: 4.0.2
   resolution: "@types/parse-json@npm:4.0.2"
@@ -1552,16 +1544,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@voxel51/fiftyone-js-plugin-build@npm:^1.0.22":
-  version: 1.0.22
-  resolution: "@voxel51/fiftyone-js-plugin-build@npm:1.0.22"
+"@voxel51/fiftyone-js-plugin-build@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@voxel51/fiftyone-js-plugin-build@npm:2.0.0"
   peerDependencies:
     "@rollup/plugin-node-resolve": ^15
     "@types/node": "*"
     "@vitejs/plugin-react": ^4
     vite: ^5
     vite-plugin-externalize-deps: ^0.8
-  checksum: 10c0/4d28f7942723d28bec3cd3b8fc03cde8377a7d44b64a02cf8e387518c2a825991b654094abf58ba3d2da924e3a4154f10e0c78f68cfc7f6f70fc18a2858f2b82
+  checksum: 10c0/cb73619e72baf26daa29d25daf98a80f4c03a3e19917770b83a104579104c3b17d536aa34dde863db266f954643170b885c1cfa4510c9300768e67b306be60f4
   languageName: node
   linkType: hard
 
@@ -2143,17 +2135,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-png@npm:^6.1.0":
-  version: 6.2.0
-  resolution: "fast-png@npm:6.2.0"
-  dependencies:
-    "@types/pako": "npm:^2.0.0"
-    iobuffer: "npm:^5.3.2"
-    pako: "npm:^2.1.0"
-  checksum: 10c0/42b61a3c83dd254d47dfac350669c891d13d655eff2819dc99bd6a3f09c8cfb3f8f6cbd5354fa91a49c6a52e5665c60260cf1cf61a33bdacbdaf0fdcbbcfbe6c
-  languageName: node
-  linkType: hard
-
 "fast-shallow-equal@npm:^1.0.0":
   version: 1.0.0
   resolution: "fast-shallow-equal@npm:1.0.0"
@@ -2505,13 +2486,6 @@ __metadata:
   dependencies:
     loose-envify: "npm:^1.0.0"
   checksum: 10c0/5af133a917c0bcf65e84e7f23e779e7abc1cd49cb7fdc62d00d1de74b0d8c1b5ee74ac7766099fb3be1b05b26dfc67bab76a17030d2fe7ea2eef867434362dfc
-  languageName: node
-  linkType: hard
-
-"iobuffer@npm:^5.3.2":
-  version: 5.3.2
-  resolution: "iobuffer@npm:5.3.2"
-  checksum: 10c0/56832ca592a602d564ba89812ae0514f6ff38bd91426c62d78374369c431be8dda804a2d6d4a36a0af8dc787bf49fcf5d85f1103d8365601dd7ec9be1d113857
   languageName: node
   linkType: hard
 
@@ -3006,13 +2980,6 @@ __metadata:
   version: 1.0.1
   resolution: "package-json-from-dist@npm:1.0.1"
   checksum: 10c0/62ba2785eb655fec084a257af34dbe24292ab74516d6aecef97ef72d4897310bc6898f6c85b5cd22770eaa1ce60d55a0230e150fb6a966e3ecd6c511e23d164b
-  languageName: node
-  linkType: hard
-
-"pako@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "pako@npm:2.1.0"
-  checksum: 10c0/8e8646581410654b50eb22a5dfd71159cae98145bd5086c9a7a816ec0370b5f72b4648d08674624b3870a521e6a3daffd6c2f7bc00fdefc7063c9d8232ff5116
   languageName: node
   linkType: hard
 
