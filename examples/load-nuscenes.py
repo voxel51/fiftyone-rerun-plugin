@@ -5,6 +5,9 @@ import os
 import pathlib
 from typing import Any, Final, Literal
 
+import math
+from typing import Sequence
+
 import fiftyone as fo
 import fiftyone.utils.utils3d as fou3d
 import matplotlib
@@ -49,6 +52,88 @@ norm = matplotlib.colors.Normalize(
 )
 
 # --- RERUN ---
+
+EARTH_RADIUS_METERS = 6.378137e6
+REFERENCE_COORDINATES = {
+    "boston-seaport": [42.336849169438615, -71.05785369873047],
+    "singapore-onenorth": [1.2882100868743724, 103.78475189208984],
+    "singapore-hollandvillage": [1.2993652317780957, 103.78217697143555],
+    "singapore-queenstown": [1.2782562240223188, 103.76741409301758],
+}
+
+
+def get_coordinate(
+    ref_lat: float, ref_lon: float, bearing: float, dist: float
+) -> tuple[float, float]:
+    """
+    Using a reference coordinate, extract the coordinates of another point in space given its distance and bearing
+    to the reference coordinate. For reference, please see: https://www.movable-type.co.uk/scripts/latlong.html.
+
+    Parameters
+    ----------
+    ref_lat : float
+        Latitude of the reference coordinate in degrees, e.g., 42.3368.
+    ref_lon : float
+        Longitude of the reference coordinate in degrees, e.g., 71.0578.
+    bearing : float
+        The clockwise angle in radians between the target point, reference point, and the axis pointing north.
+    dist : float
+        The distance in meters from the reference point to the target point.
+
+    Returns
+    -------
+    tuple[float, float]
+        A tuple of latitude and longitude.
+
+    """  # noqa: D205
+    lat, lon = math.radians(ref_lat), math.radians(ref_lon)
+    angular_distance = dist / EARTH_RADIUS_METERS
+
+    target_lat = math.asin(
+        math.sin(lat) * math.cos(angular_distance)
+        + math.cos(lat) * math.sin(angular_distance) * math.cos(bearing)
+    )
+    target_lon = lon + math.atan2(
+        math.sin(bearing) * math.sin(angular_distance) * math.cos(lat),
+        math.cos(angular_distance) - math.sin(lat) * math.sin(target_lat),
+    )
+    return math.degrees(target_lat), math.degrees(target_lon)
+
+
+def derive_latlon(
+    location: str, pose: dict[str, Sequence[float]]
+) -> tuple[float, float]:
+    """
+    Extract lat/lon coordinate from pose.
+
+    This makes the following two assumptions in order to work:
+        1. The reference coordinate for each map is in the south-western corner.
+        2. The origin of the global poses is also in the south-western corner (and identical to 1).
+
+    Parameters
+    ----------
+    location : str
+        The name of the map the poses correspond to, i.e., `boston-seaport`.
+    pose : dict[str, Sequence[float]]
+        nuScenes egopose.
+
+    Returns
+    -------
+    tuple[float, float]
+    Latitude and longitude coordinates in degrees.
+
+    """
+    assert (
+        location in REFERENCE_COORDINATES.keys()
+    ), f"Error: The given location: {location}, has no available reference."
+
+    reference_lat, reference_lon = REFERENCE_COORDINATES[location]
+    x, y = pose["translation"][:2]
+    bearing = math.atan(x / y)
+    distance = math.sqrt(x**2 + y**2)
+    lat, lon = get_coordinate(reference_lat, reference_lon, bearing, distance)
+
+    return lat, lon
 
 
 def log_lidar_and_ego_pose(
@@ -118,11 +203,13 @@ def log_radars(
 
 
 def log_annotations(
+    location: str,
     first_sample_token: str,
     max_timestamp_us: float,
     stream: rr.RecordingStream,
 ) -> None:
-    """Log 3D bounding boxes and annotation context."""
+    rr.log
+    """Log 3D bounding boxes."""
     label2id: dict[str, int] = {}
     current_sample_token = first_sample_token
     while current_sample_token != "":
@@ -135,6 +222,7 @@ def log_annotations(
         centers = []
         quaternions = []
         class_ids = []
+        lat_lon = []
         for ann_token in ann_tokens:
             ann = nusc.get("sample_annotation", ann_token)
 
@@ -146,6 +234,7 @@ def log_annotations(
             if ann["category_name"] not in label2id:
                 label2id[ann["category_name"]] = len(label2id)
             class_ids.append(label2id[ann["category_name"]])
+            lat_lon.append(derive_latlon(location, ann))
 
         stream.log(
             "world/anns",
@@ -154,8 +243,8 @@ def log_annotations(
                 centers=centers,
                 quaternions=quaternions,
                 class_ids=class_ids,
-                fill_mode=rr.components.FillMode.Solid,
             ),
+            rr.GeoPoints(lat_lon=lat_lon),
         )
         current_sample_token = sample_data["next"]
 
@@ -224,6 +313,8 @@ def log_nuscenes(
 
     scene = next(s for s in nusc.scene if s["name"] == scene_name)
 
+    location = nusc.get("log", scene["log_token"])["location"]
+
     rr.log("world", rr.ViewCoordinates.RIGHT_HAND_Z_UP, static=True)
 
     first_sample_token = scene["first_sample_token"]
@@ -248,7 +339,7 @@ def log_nuscenes(
 
     log_lidar_and_ego_pose(first_lidar_token, max_timestamp_us, stream)
     log_radars(first_radar_tokens, max_timestamp_us, stream)
-    log_annotations(first_sample_token, max_timestamp_us, stream)
+    log_annotations(location, first_sample_token, max_timestamp_us, stream)
 
 
 def setup_rerun():
@@ -261,8 +352,18 @@ def setup_rerun():
             # Default for `ImagePlaneDistance` so that the pinhole frustum visualizations don't take up too much space.
             defaults=[rr.components.ImagePlaneDistance(4.0)],
             # Transform arrows for the vehicle shouldn't be too long.
-            overrides={"world/ego_vehicle": [rr.components.AxisLength(5.0)]},
-        )
+            overrides={"world/ego_vehicle": [rr.components.AxisLength(3.0)]},
+            
+        ),
+        rrb.MapView(
+            origin="world",
+            name="MapView",
+            zoom=rrb.archetypes.MapZoom(18.0),
+            background=rrb.archetypes.MapBackground(
+                rrb.components.MapProvider.OpenStreetMap
+            ),
+        ),
+        row_shares=[2, 1],
     )
 
     nuscene_DATA_DIR = DATA_DIR
