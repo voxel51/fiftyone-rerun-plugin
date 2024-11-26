@@ -1,12 +1,10 @@
 from __future__ import annotations
 
 import argparse
+import math
 import os
 import pathlib
-from typing import Any, Final, Literal
-
-import math
-from typing import Sequence
+from typing import Any, Final, Literal, Sequence
 
 import fiftyone as fo
 import fiftyone.utils.utils3d as fou3d
@@ -18,6 +16,7 @@ import rerun.blueprint as rrb
 from fiftyone.utils.rerun import RrdFile
 from nuscenes import nuscenes
 from nuscenes.lidarseg.lidarseg_utils import paint_points_label
+from nuscenes.scripts.export_poses import derive_latlon as derive_latlon_nu
 from nuscenes.utils.color_map import get_colormap
 from nuscenes.utils.data_classes import LidarPointCloud, RadarPointCloud
 from nuscenes.utils.geometry_utils import BoxVisibility, box_in_image, view_points
@@ -353,7 +352,6 @@ def setup_rerun():
             defaults=[rr.components.ImagePlaneDistance(4.0)],
             # Transform arrows for the vehicle shouldn't be too long.
             overrides={"world/ego_vehicle": [rr.components.AxisLength(3.0)]},
-            
         ),
         rrb.MapView(
             origin="world",
@@ -465,7 +463,7 @@ def get_camera_sample(group, filepath, sensor, token, scene):
     ego = nusc.get("ego_pose", data["ego_pose_token"])
     ego_list = [ego]
 
-    latlon = derive_latlon(location, ego_list)
+    latlon = derive_latlon_nu(location, ego_list)
     lat = latlon[0]["latitude"]
     lon = latlon[0]["longitude"]
     sample["location"] = fo.GeoLocation(point=[lon, lat])
@@ -539,7 +537,7 @@ def setup_fiftyone():
             )
             ego_list = [ego]
 
-            latlon = derive_latlon(location, ego_list)
+            latlon = derive_latlon_nu(location, ego_list)
             lat = latlon[0]["latitude"]
             lon = latlon[0]["longitude"]
 
@@ -550,11 +548,15 @@ def setup_fiftyone():
                 modality = data["sensor_modality"]
                 filepath = NUSCENES_DATA_DIR / data["filename"]
 
-                if modality == "lidar" or modality == "radar":
+                if modality == "lidar":
                     this_token = my_sample["data"][sensor]
                     filepath = write_pcd_file(this_token, modality)
                     pcds[sensor] = filepath
-                    threed_detections.extend(get_threed_detections(this_token))
+
+                    # skip radar annotations since they're repeated
+                    if modality == "lidar":
+                        threed_detections.extend(get_threed_detections(this_token))
+
                     sample = lidar_sensor_info
                 elif modality == "camera":
                     sample = get_camera_sample(
