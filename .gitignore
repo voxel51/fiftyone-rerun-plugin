@@ -16,4 +16,10 @@
 .pnp.cjs
 .pnp.loader.mjs
 
-dist
+
+vite.config.js.timestamp-*
+node_modules
+
+__pycache__
+
+examples/**/data
