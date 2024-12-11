@@ -4,7 +4,7 @@ import argparse
 import math
 import os
 import pathlib
-from typing import Any, Final, Literal, Sequence
+from typing import Any, Literal, Sequence
 
 import fiftyone as fo
 import fiftyone.utils.utils3d as fou3d
@@ -19,29 +19,9 @@ from nuscenes.lidarseg.lidarseg_utils import paint_points_label
 from nuscenes.scripts.export_poses import derive_latlon as derive_latlon_nu
 from nuscenes.utils.color_map import get_colormap
 from nuscenes.utils.data_classes import LidarPointCloud, RadarPointCloud
-from nuscenes.utils.geometry_utils import BoxVisibility, box_in_image, view_points
+from nuscenes.utils.geometry_utils import (BoxVisibility, box_in_image,
+                                           view_points)
 from PIL import Image
-
-"""
-Before getting started, make sure you've downloaded nuscenes mini-split from
-https://www.nuscenes.org/data/v1.0-mini.tgz
-
-Unarchive it using the following command:
-```
-tar -xvf v1.0-mini.tgz
-```
-Then, set the `NUSCENES_DATA_DIR` below to the path where you've unarchived the mini-split dataset.
-"""
-
-NUSCENES_DATA_DIR: Final = pathlib.Path(
-    "/Users/sashankaryal/fiftyone/notebooks/features/v1.0-mini/"
-)
-
-# this directory stores RRD files, PCD files, FO3D files, and orthographic projection images
-DATA_DIR: Final = pathlib.Path(__file__).parent / "data"
-
-nusc = nuscenes.NuScenes(version="v1.0-mini", dataroot=NUSCENES_DATA_DIR, verbose=True)
-
 
 # used to calculate the color for lidar/radar in rerun and radar in FiftyOne
 cmap = matplotlib.colormaps["turbo_r"]
@@ -136,6 +116,7 @@ def derive_latlon(
 
 
 def log_lidar_and_ego_pose(
+    nusc: nuscenes.NuScenes,
     first_lidar_token: str,
     max_timestamp_us: float,
     stream: rr.RecordingStream,
@@ -176,6 +157,7 @@ def log_lidar_and_ego_pose(
 
 
 def log_radars(
+    nusc: nuscenes.NuScenes,
     first_radar_tokens: list[str],
     max_timestamp_us: float,
     stream: rr.RecordingStream,
@@ -202,6 +184,7 @@ def log_radars(
 
 
 def log_annotations(
+    nusc: nuscenes.NuScenes,
     location: str,
     first_sample_token: str,
     max_timestamp_us: float,
@@ -252,7 +235,7 @@ def log_annotations(
 
 
 def log_front_camera(
-    sample_data: dict[str, Any], nusc: nuscenes.NuScenes, stream: rr.RecordingStream
+    nusc: nuscenes.NuScenes, sample_data: dict[str, Any], stream: rr.RecordingStream
 ) -> None:
     """Log front pinhole camera with its calibration."""
     calibrated_sensor_token = sample_data["calibrated_sensor_token"]
@@ -282,7 +265,7 @@ def log_front_camera(
 
 
 def log_sensor_calibration(
-    sample_data: dict[str, Any], nusc: nuscenes.NuScenes, stream: rr.RecordingStream
+    nusc: nuscenes.NuScenes, sample_data: dict[str, Any], stream: rr.RecordingStream
 ) -> None:
     """Log sensor calibration (pinhole camera, sensor poses, etc.)."""
     sensor_name = sample_data["channel"]
@@ -304,6 +287,7 @@ def log_sensor_calibration(
 
 
 def log_nuscenes(
+    nusc: nuscenes.NuScenes,
     scene_name: str,
     max_time_sec: float,
     stream: rr.RecordingStream,
@@ -324,24 +308,24 @@ def log_nuscenes(
 
     for sample_data_token in first_sample["data"].values():
         sample_data = nusc.get("sample_data", sample_data_token)
-        log_sensor_calibration(sample_data, nusc, stream)
+        log_sensor_calibration(nusc, sample_data, stream)
 
         if sample_data["sensor_modality"] == "lidar":
             first_lidar_token = sample_data_token
         elif sample_data["sensor_modality"] == "radar":
             first_radar_tokens.append(sample_data_token)
         elif sample_data["channel"] == "CAM_FRONT":
-            log_front_camera(sample_data, nusc, stream)
+            log_front_camera(nusc, sample_data, stream)
 
     first_timestamp_us = nusc.get("sample_data", first_lidar_token)["timestamp"]
     max_timestamp_us = first_timestamp_us + 1e6 * max_time_sec
 
-    log_lidar_and_ego_pose(first_lidar_token, max_timestamp_us, stream)
-    log_radars(first_radar_tokens, max_timestamp_us, stream)
-    log_annotations(location, first_sample_token, max_timestamp_us, stream)
+    log_lidar_and_ego_pose(nusc, first_lidar_token, max_timestamp_us, stream)
+    log_radars(nusc, first_radar_tokens, max_timestamp_us, stream)
+    log_annotations(nusc, location, first_sample_token, max_timestamp_us, stream)
 
 
-def setup_rerun():
+def setup_rerun(nusc, output_dir):
     print("Outputting rrd files for nuscenes dataset")
     # blueprint dictates how the data is visualized by default
     blueprint = rrb.Vertical(
@@ -364,9 +348,6 @@ def setup_rerun():
         row_shares=[2, 1],
     )
 
-    nuscene_DATA_DIR = DATA_DIR
-    nuscene_DATA_DIR.mkdir(exist_ok=True)
-
     all_scene_names = [scene["name"] for scene in nusc.scene]
 
     for scene_name in all_scene_names:
@@ -374,9 +355,11 @@ def setup_rerun():
             application_id="nuscenes", recording_id=scene_name
         )
 
-        log_nuscenes(scene_name, max_time_sec=float("inf"), stream=this_scene_recording)
+        log_nuscenes(
+            nusc, scene_name, max_time_sec=float("inf"), stream=this_scene_recording
+        )
 
-        rrd_path = nuscene_DATA_DIR / f"{scene_name}.rrd"
+        rrd_path = output_dir / f"{scene_name}.rrd"
 
         if rrd_path.exists():
             print(f"{rrd_path} already exists, overwriting...")
@@ -389,7 +372,9 @@ def setup_rerun():
 # --- FIFTYONE ---
 
 
-def get_3d_colors(points, token, modality=Literal["lidar", "radar"]):
+def get_3d_colors(
+    nuscenes_dir, nusc, points, token, modality=Literal["lidar", "radar"]
+):
     if modality == "radar":
         point_distances = np.linalg.norm(points, axis=1)
         point_colors = cmap(norm(point_distances))
@@ -398,7 +383,7 @@ def get_3d_colors(points, token, modality=Literal["lidar", "radar"]):
     # Grab and Generate Colormaps
     gt_from = "lidarseg"
 
-    lidarseg_filename = str(NUSCENES_DATA_DIR / nusc.get(gt_from, token)["filename"])
+    lidarseg_filename = str(nuscenes_dir / nusc.get(gt_from, token)["filename"])
     colormap = get_colormap()
     name2index = nusc.lidarseg_name2idx_mapping
 
@@ -409,24 +394,26 @@ def get_3d_colors(points, token, modality=Literal["lidar", "radar"]):
     return o3d.utility.Vector3dVector(colors)
 
 
-def write_pcd_file(token, modality=Literal["lidar", "radar"]):
-    filepath = str(NUSCENES_DATA_DIR / nusc.get("sample_data", token)["filename"])
+def write_pcd_file(
+    nuscenes_dir, output_dir, nusc, token, modality=Literal["lidar", "radar"]
+):
+    filepath = str(nuscenes_dir / nusc.get("sample_data", token)["filename"])
     if modality == "radar":
         cloud = RadarPointCloud.from_file(filepath)
     else:
         cloud = LidarPointCloud.from_file(filepath)
     pcd = o3d.geometry.PointCloud()
     pcd.points = o3d.utility.Vector3dVector(cloud.points[:3, :].T)
-    pcd.colors = get_3d_colors(pcd.points, token, modality)
+    pcd.colors = get_3d_colors(nuscenes_dir, nusc, pcd.points, token, modality)
 
     # Save back Point Cloud
     pcd_file_name = os.path.basename(filepath).split(".")[0] + ".pcd"
-    pcd_output_path = os.path.join(DATA_DIR, pcd_file_name)
+    pcd_output_path = os.path.join(output_dir, pcd_file_name)
     o3d.io.write_point_cloud(pcd_output_path, pcd)
     return pcd_output_path
 
 
-def get_threed_detections(lidar_token):
+def get_threed_detections(nusc, lidar_token):
     data_path, boxes, camera_intrinsic = nusc.get_sample_data(
         lidar_token,
         box_vis_level=BoxVisibility.NONE,
@@ -447,7 +434,7 @@ def get_threed_detections(lidar_token):
     return detections
 
 
-def get_camera_sample(group, filepath, sensor, token, scene):
+def get_camera_sample(nusc, group, filepath, sensor, token, scene):
     sample = fo.Sample(filepath=filepath, group=group.element(sensor))
     data = nusc.get("sample_data", token)
     data_path, boxes, camera_intrinsic = nusc.get_sample_data(
@@ -469,7 +456,6 @@ def get_camera_sample(group, filepath, sensor, token, scene):
     sample["location"] = fo.GeoLocation(point=[lon, lat])
     for box in boxes:
         if box_in_image(box, camera_intrinsic, shape, vis_level=BoxVisibility.ALL):
-            c = np.array(nusc.colormap[box.name]) / 255.0
             corners = view_points(box.corners(), camera_intrinsic, normalize=True)[
                 :2, :
             ]
@@ -490,7 +476,7 @@ def get_camera_sample(group, filepath, sensor, token, scene):
     return sample
 
 
-def setup_fiftyone():
+def setup_fiftyone(nusc, nuscenes_dir, output_dir):
     try:
         fo.delete_dataset("nuscenes-rerun-fo")
     except:
@@ -546,21 +532,25 @@ def setup_fiftyone():
             for sensor in sensor_names:
                 data = nusc.get("sample_data", my_sample["data"][sensor])
                 modality = data["sensor_modality"]
-                filepath = NUSCENES_DATA_DIR / data["filename"]
+                filepath = nuscenes_dir / data["filename"]
 
                 if modality == "lidar" or modality == "radar":
                     this_token = my_sample["data"][sensor]
-                    filepath = write_pcd_file(this_token, modality)
+                    filepath = write_pcd_file(
+                        nuscenes_dir, output_dir, nusc, this_token, modality
+                    )
                     pcds[sensor] = filepath
 
                     # skip radar annotations since they're repeated
                     if modality == "lidar":
-                        threed_detections.extend(get_threed_detections(this_token))
+                        threed_detections.extend(
+                            get_threed_detections(nusc, this_token)
+                        )
 
                     sample = lidar_sensor_info
                 elif modality == "camera":
                     sample = get_camera_sample(
-                        group, filepath, sensor, my_sample["data"][sensor], scene
+                        nusc, group, filepath, sensor, my_sample["data"][sensor], scene
                     )
                 else:
                     sample = fo.Sample(filepath=filepath, group=group.element(sensor))
@@ -576,14 +566,16 @@ def setup_fiftyone():
                 sample["scene_name"] = scene_name
                 sample["location"] = fo.GeoLocation(point=[lon, lat])
 
-                sample["lidar"] = RrdFile(filepath=str(DATA_DIR / f"{scene_name}.rrd"))
+                sample["lidar"] = RrdFile(
+                    filepath=str(output_dir / f"{scene_name}.rrd")
+                )
 
                 # we handle lidar separately
                 if modality != "lidar" and modality != "radar":
                     samples.append(sample)
 
             fo3d_scene = fo.Scene(camera=fo.PerspectiveCamera(up="Z"))
-            fo3d_filepath = os.path.join(DATA_DIR, f"{scene_name}.fo3d")
+            fo3d_filepath = os.path.join(output_dir, f"{scene_name}.fo3d")
             for sensor, pcd in pcds.items():
                 fo3d_scene.add(
                     fo.PointCloud(
@@ -609,7 +601,7 @@ def setup_fiftyone():
     dataset.save_view("ordered", view)
 
     print("Computing orthographic projects for the grid...")
-    orthographic_images_output_dir = str(DATA_DIR / "orthographic_images")
+    orthographic_images_output_dir = str(output_dir / "orthographic_images")
     fou3d.compute_orthographic_projection_images(
         dataset,
         (-1, 512),
@@ -617,6 +609,10 @@ def setup_fiftyone():
         in_group_slice="3D",
         shading_mode="rgb",
     )
+
+
+def get_nusc(nuscenes_dir: str):
+    return nuscenes.NuScenes(version="v1.0-mini", dataroot=nuscenes_dir, verbose=True)
 
 
 def main():
@@ -631,17 +627,45 @@ def main():
         action="store_true",
         help="Setup fiftyone dataset",
     )
+    parser.add_argument(
+        "--nuscenes-data-dir",
+        type=pathlib.Path,
+        default=os.environ.get("NUSCENES_DATA_DIR"),
+        required=True,
+        help="Path to the NuScenes data directory",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=pathlib.Path,
+        help="Path to the output directory where the RRD files, PCD\
+            files, FO3D files, and orthographic projection images will be stored.\
+            If not provided, the files will be stored in the `data` directory.",
+    )
     args = parser.parse_args()
 
+    if not args.nuscenes_data_dir:
+        print(
+            "Please provide the NuScenes data directory via --nuscenes-data-dir or set the \
+              NUSCENES_DATA_DIR environment variable."
+        )
+        exit(1)
+
+    if not args.output_dir:
+        output_dir = pathlib.Path(__file__).parent / "data"
+        output_dir.mkdir(exist_ok=True)
+        args.output_dir = output_dir
+
+    nusc = get_nusc(args.nuscenes_data_dir)
+
     if args.rrd:
-        setup_rerun()
+        setup_rerun(nusc, args.output_dir)
     else:
-        print("Not outputting RRD files")
+        print("Skipping outputting RRD files (--rrd not set)")
 
     if args.fiftyone:
-        setup_fiftyone()
+        setup_fiftyone(nusc, args.nuscenes_data_dir, args.output_dir)
     else:
-        print("Not setting up fiftyone dataset")
+        print("Skipping setting up fiftyone dataset (--fiftyone not set)")
 
     print("Done!")
 
