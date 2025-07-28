@@ -17,5 +17,6 @@ fop.registerComponent({
   panelOptions: {
     surfaces: "modal",
     helpMarkdown: `Rereun viewer for FiftyOne`,
+    isNew: false,
   },
 });

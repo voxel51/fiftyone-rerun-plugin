@@ -566,9 +566,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fiftyone/components@portal:../../fiftyone/app/packages/components::locator=%40fiftyone%2Frerun-plugin%40workspace%3A.":
+"@fiftyone/components@portal:../fiftyone/app/packages/components::locator=%40fiftyone%2Frerun-plugin%40workspace%3A.":
   version: 0.0.0-use.local
-  resolution: "@fiftyone/components@portal:../../fiftyone/app/packages/components::locator=%40fiftyone%2Frerun-plugin%40workspace%3A."
+  resolution: "@fiftyone/components@portal:../fiftyone/app/packages/components::locator=%40fiftyone%2Frerun-plugin%40workspace%3A."
   dependencies:
     "@emotion/react": "npm:^11.10.4"
     "@emotion/styled": "npm:^11.10.4"
@@ -585,6 +585,7 @@ __metadata:
     react-syntax-highlighter: "npm:^15.5.0"
     react-use: "npm:^17.5.1"
   peerDependencies:
+    jotai: "*"
     re-resizable: "*"
     react: "*"
     react-relay: "*"
@@ -593,13 +594,14 @@ __metadata:
   languageName: node
   linkType: soft
 
-"@fiftyone/looker@portal:../../fiftyone/app/packages/looker::locator=%40fiftyone%2Frerun-plugin%40workspace%3A.":
+"@fiftyone/looker@portal:../fiftyone/app/packages/looker::locator=%40fiftyone%2Frerun-plugin%40workspace%3A.":
   version: 0.0.0-use.local
-  resolution: "@fiftyone/looker@portal:../../fiftyone/app/packages/looker::locator=%40fiftyone%2Frerun-plugin%40workspace%3A."
+  resolution: "@fiftyone/looker@portal:../fiftyone/app/packages/looker::locator=%40fiftyone%2Frerun-plugin%40workspace%3A."
   dependencies:
     "@ungap/event-target": "npm:^0.2.2"
     "@xmldom/xmldom": "npm:^0.8.6"
     copy-to-clipboard: "npm:^3.3.1"
+    fast-png: "npm:^6.2.0"
     immutable: "npm:^4.0.0-rc.12"
     lodash: "npm:^4.17.21"
     lru-cache: "npm:^11.0.1"
@@ -611,26 +613,26 @@ __metadata:
   languageName: node
   linkType: soft
 
-"@fiftyone/operators@portal:../../fiftyone/app/packages/operators::locator=%40fiftyone%2Frerun-plugin%40workspace%3A.":
+"@fiftyone/operators@portal:../fiftyone/app/packages/operators::locator=%40fiftyone%2Frerun-plugin%40workspace%3A.":
   version: 0.0.0-use.local
-  resolution: "@fiftyone/operators@portal:../../fiftyone/app/packages/operators::locator=%40fiftyone%2Frerun-plugin%40workspace%3A."
+  resolution: "@fiftyone/operators@portal:../fiftyone/app/packages/operators::locator=%40fiftyone%2Frerun-plugin%40workspace%3A."
   peerDependencies:
     "@mui/icons-material": "*"
     "@mui/material": "*"
   languageName: node
   linkType: soft
 
-"@fiftyone/plugins@portal:../../fiftyone/app/packages/plugins::locator=%40fiftyone%2Frerun-plugin%40workspace%3A.":
+"@fiftyone/plugins@portal:../fiftyone/app/packages/plugins::locator=%40fiftyone%2Frerun-plugin%40workspace%3A.":
   version: 0.0.0-use.local
-  resolution: "@fiftyone/plugins@portal:../../fiftyone/app/packages/plugins::locator=%40fiftyone%2Frerun-plugin%40workspace%3A."
+  resolution: "@fiftyone/plugins@portal:../fiftyone/app/packages/plugins::locator=%40fiftyone%2Frerun-plugin%40workspace%3A."
   dependencies:
     moment: "npm:^2.29.4"
   languageName: node
   linkType: soft
 
-"@fiftyone/relay@portal:../../fiftyone/app/packages/relay::locator=%40fiftyone%2Frerun-plugin%40workspace%3A.":
+"@fiftyone/relay@portal:../fiftyone/app/packages/relay::locator=%40fiftyone%2Frerun-plugin%40workspace%3A.":
   version: 0.0.0-use.local
-  resolution: "@fiftyone/relay@portal:../../fiftyone/app/packages/relay::locator=%40fiftyone%2Frerun-plugin%40workspace%3A."
+  resolution: "@fiftyone/relay@portal:../fiftyone/app/packages/relay::locator=%40fiftyone%2Frerun-plugin%40workspace%3A."
   dependencies:
     "@recoiljs/refine": "npm:^0.1.1"
     react-relay: "npm:^14.1.0"
@@ -642,14 +644,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fiftyone/rerun-plugin@workspace:."
   dependencies:
-    "@fiftyone/components": "portal:../../fiftyone/app/packages/components"
-    "@fiftyone/looker": "portal:../../fiftyone/app/packages/looker"
-    "@fiftyone/operators": "portal:../../fiftyone/app/packages/operators"
-    "@fiftyone/plugins": "portal:../../fiftyone/app/packages/plugins"
-    "@fiftyone/relay": "portal:../../fiftyone/app/packages/relay"
-    "@fiftyone/state": "portal:../../fiftyone/app/packages/state"
-    "@fiftyone/utilities": "portal:../../fiftyone/app/packages/utilities"
-    "@rerun-io/web-viewer": "npm:^0.20.1"
+    "@fiftyone/components": "portal:../fiftyone/app/packages/components"
+    "@fiftyone/looker": "portal:../fiftyone/app/packages/looker"
+    "@fiftyone/operators": "portal:../fiftyone/app/packages/operators"
+    "@fiftyone/plugins": "portal:../fiftyone/app/packages/plugins"
+    "@fiftyone/relay": "portal:../fiftyone/app/packages/relay"
+    "@fiftyone/state": "portal:../fiftyone/app/packages/state"
+    "@fiftyone/utilities": "portal:../fiftyone/app/packages/utilities"
+    "@rerun-io/web-viewer": "npm:^0.24.0"
+    "@rerun-io/web-viewer-react": "npm:^0.24.0"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
     "@types/node": "npm:^22.7.6"
     "@vitejs/plugin-react": "npm:^4.3.3"
@@ -666,9 +669,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fiftyone/state@portal:../../fiftyone/app/packages/state::locator=%40fiftyone%2Frerun-plugin%40workspace%3A.":
+"@fiftyone/state@portal:../fiftyone/app/packages/state::locator=%40fiftyone%2Frerun-plugin%40workspace%3A.":
   version: 0.0.0-use.local
-  resolution: "@fiftyone/state@portal:../../fiftyone/app/packages/state::locator=%40fiftyone%2Frerun-plugin%40workspace%3A."
+  resolution: "@fiftyone/state@portal:../fiftyone/app/packages/state::locator=%40fiftyone%2Frerun-plugin%40workspace%3A."
   dependencies:
     "@fiftyone/looker": "npm:*"
     "@fiftyone/relay": "npm:*"
@@ -685,9 +688,9 @@ __metadata:
   languageName: node
   linkType: soft
 
-"@fiftyone/utilities@portal:../../fiftyone/app/packages/utilities::locator=%40fiftyone%2Frerun-plugin%40workspace%3A.":
+"@fiftyone/utilities@portal:../fiftyone/app/packages/utilities::locator=%40fiftyone%2Frerun-plugin%40workspace%3A.":
   version: 0.0.0-use.local
-  resolution: "@fiftyone/utilities@portal:../../fiftyone/app/packages/utilities::locator=%40fiftyone%2Frerun-plugin%40workspace%3A."
+  resolution: "@fiftyone/utilities@portal:../fiftyone/app/packages/utilities::locator=%40fiftyone%2Frerun-plugin%40workspace%3A."
   dependencies:
     "@microsoft/fetch-event-source": "npm:^2.0.1"
     fetch-retry: "npm:^5.0.3"
@@ -1088,10 +1091,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rerun-io/web-viewer@npm:^0.20.1":
-  version: 0.20.1
-  resolution: "@rerun-io/web-viewer@npm:0.20.1"
-  checksum: 10c0/181f303d6e909b0bae215d427c1c0a2a90e12861db7215f34c832d96b8d936da39fe2e1f28fbafbeab1ae2c8c0ad79192e3a7befbb58817a98476ea368a7c544
+"@rerun-io/web-viewer-react@npm:^0.24.0":
+  version: 0.24.0
+  resolution: "@rerun-io/web-viewer-react@npm:0.24.0"
+  dependencies:
+    "@rerun-io/web-viewer": "npm:0.24.0"
+    "@types/react": "npm:^18.2.33"
+    react: "npm:^18.2.0"
+  checksum: 10c0/458b0da657cf51b94a2e6a427875d14a0083af35b6636405120c6d7786eb017258e4a5b42926f530e814fa6e0f347c9e2b7a115a3531eed6c7fb38c036dc7213
+  languageName: node
+  linkType: hard
+
+"@rerun-io/web-viewer@npm:0.24.0, @rerun-io/web-viewer@npm:^0.24.0":
+  version: 0.24.0
+  resolution: "@rerun-io/web-viewer@npm:0.24.0"
+  checksum: 10c0/b7d4d6b8fd2fc83924fed17c316629c0c450d967ca6136eabb9e48f5585e50eb0c131d9924a460159d11a567caf04028e79dc5f87f169dbaddc6d879993ea74c
   languageName: node
   linkType: hard
 
@@ -1475,6 +1489,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/pako@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "@types/pako@npm:2.0.3"
+  checksum: 10c0/45119ac3c4e8a77317c35493327039b74e333562f06ce038048228918d8ddfaa7958125aab960d1565b3861046022754c414dba1eecb210c44a32c415956bee2
+  languageName: node
+  linkType: hard
+
 "@types/parse-json@npm:^4.0.0":
   version: 4.0.2
   resolution: "@types/parse-json@npm:4.0.2"
@@ -1505,6 +1526,16 @@ __metadata:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
   checksum: 10c0/ce80512246ca5bda69db85b9f4f1835189334acfb6b2c4f3eda8cabff1ff1a3ea9ce4f3b895bdbc18c94140aa45592331aa3fdeb557f525c1b048de7ce84fc0e
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18.2.33":
+  version: 18.3.23
+  resolution: "@types/react@npm:18.3.23"
+  dependencies:
+    "@types/prop-types": "npm:*"
+    csstype: "npm:^3.0.2"
+  checksum: 10c0/49331800b76572eb2992a5c44801dbf8c612a5f99c8f4e4200f06c7de6f3a6e9455c661784a6c5469df96fa45622cb4a9d0982c44e6a0d5719be5f2ef1f545ed
   languageName: node
   linkType: hard
 
@@ -2135,6 +2166,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-png@npm:^6.2.0":
+  version: 6.4.0
+  resolution: "fast-png@npm:6.4.0"
+  dependencies:
+    "@types/pako": "npm:^2.0.3"
+    iobuffer: "npm:^5.3.2"
+    pako: "npm:^2.1.0"
+  checksum: 10c0/bca27a09d56a5ead536b11c1ddccf4fe44c7c0af88a8faefab6a397527d9c71b00c09b2055d0108807c438c50719dd2acbd7217ef88785b500888db26fa0358a
+  languageName: node
+  linkType: hard
+
 "fast-shallow-equal@npm:^1.0.0":
   version: 1.0.0
   resolution: "fast-shallow-equal@npm:1.0.0"
@@ -2486,6 +2528,13 @@ __metadata:
   dependencies:
     loose-envify: "npm:^1.0.0"
   checksum: 10c0/5af133a917c0bcf65e84e7f23e779e7abc1cd49cb7fdc62d00d1de74b0d8c1b5ee74ac7766099fb3be1b05b26dfc67bab76a17030d2fe7ea2eef867434362dfc
+  languageName: node
+  linkType: hard
+
+"iobuffer@npm:^5.3.2":
+  version: 5.4.0
+  resolution: "iobuffer@npm:5.4.0"
+  checksum: 10c0/1b3f9a5ea158bc63f038b374b42832acdb9db13ea9cfa4ed78723f30894986442f6c033dff4ae2fdf34724bf0fe432e3b86c11ca82049568c58b8d7fb47a6ac2
   languageName: node
   linkType: hard
 
@@ -2980,6 +3029,13 @@ __metadata:
   version: 1.0.1
   resolution: "package-json-from-dist@npm:1.0.1"
   checksum: 10c0/62ba2785eb655fec084a257af34dbe24292ab74516d6aecef97ef72d4897310bc6898f6c85b5cd22770eaa1ce60d55a0230e150fb6a966e3ecd6c511e23d164b
+  languageName: node
+  linkType: hard
+
+"pako@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "pako@npm:2.1.0"
+  checksum: 10c0/8e8646581410654b50eb22a5dfd71159cae98145bd5086c9a7a816ec0370b5f72b4648d08674624b3870a521e6a3daffd6c2f7bc00fdefc7063c9d8232ff5116
   languageName: node
   linkType: hard
 

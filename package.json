@@ -20,7 +20,7 @@
     "@fiftyone/relay": "portal:../../fiftyone/app/packages/relay",
     "@fiftyone/state": "portal:../../fiftyone/app/packages/state",
     "@fiftyone/utilities": "portal:../../fiftyone/app/packages/utilities",
-    "@rerun-io/web-viewer": "^0.20.1",
+    "@rerun-io/web-viewer": "^0.24.0",
     "lru-cache": "^11.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
