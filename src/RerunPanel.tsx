@@ -3,7 +3,7 @@ import { getFieldsWithEmbeddedDocType } from "@fiftyone/utilities";
 import React, { useMemo } from "react";
 import { useRecoilValue } from "recoil";
 import { CustomErrorBoundary } from "./CustomErrorBoundary";
-import { RrdIframeRenderer } from "./RrdIframeRenderer";
+import { RerunReactRenderer } from "./RerunReactRenderer";
 
 export const RerunFileDescriptor = {
   EMBEDDED_DOC_TYPE: "fiftyone.utils.rerun.RrdFile",
@@ -57,9 +57,7 @@ export const RerunViewer = React.memo(() => {
 
   return (
     <CustomErrorBoundary>
-      {/* use iframe until versioned web viewer renderer is more stable, note: vite will not bundle any rerun deps */}
-      {/* <RrdWebViewerRenderer url={rrdParams.url} version={rrdParams.version} /> */}
-      <RrdIframeRenderer url={rrdParams.url} />
+      <RerunReactRenderer url={rrdParams.url} version={rrdParams.version} />
     </CustomErrorBoundary>
   );
 });
