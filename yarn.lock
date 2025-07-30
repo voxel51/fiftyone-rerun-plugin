@@ -651,7 +651,6 @@ __metadata:
     "@fiftyone/relay": "portal:../fiftyone/app/packages/relay"
     "@fiftyone/state": "portal:../fiftyone/app/packages/state"
     "@fiftyone/utilities": "portal:../fiftyone/app/packages/utilities"
-    "@rerun-io/web-viewer": "npm:^0.24.0"
     "@rerun-io/web-viewer-react": "npm:^0.24.0"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
     "@types/node": "npm:^22.7.6"
@@ -1102,7 +1101,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rerun-io/web-viewer@npm:0.24.0, @rerun-io/web-viewer@npm:^0.24.0":
+"@rerun-io/web-viewer@npm:0.24.0":
   version: 0.24.0
   resolution: "@rerun-io/web-viewer@npm:0.24.0"
   checksum: 10c0/b7d4d6b8fd2fc83924fed17c316629c0c450d967ca6136eabb9e48f5585e50eb0c131d9924a460159d11a567caf04028e79dc5f87f169dbaddc6d879993ea74c
