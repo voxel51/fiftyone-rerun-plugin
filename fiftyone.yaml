@@ -1,6 +1,6 @@
 name: "@fiftyone/rerun-plugin"
 description: Rerun plugin for FiftyOne
-version: 1.0.0
+version: 0.27.2
 fiftyone:
   version: "*"
 license: Apache 2.0

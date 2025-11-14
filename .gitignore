@@ -6,6 +6,7 @@
 !.yarn/sdks
 !.yarn/versions
 !.yarnrc.yml
+.DS_Store
 
 # Yarn Cache and Unplugged (should be ignored)
 .yarn/cache
