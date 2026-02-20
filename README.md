@@ -8,8 +8,6 @@ A plugin that enables users to visualize [Rerun](https://rerun.io/) data files
 ## Installation
 
 ```shell
-pip install fiftyone rerun-sdk
-
 fiftyone plugins download https://github.com/voxel51/fiftyone-rerun-plugin
 ```
 
