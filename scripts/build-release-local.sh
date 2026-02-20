@@ -79,7 +79,7 @@ RERUN_VERSION="$version" node -e '
   const version = process.env.RERUN_VERSION;
   const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
   pkg.version = version;
-  pkg.dependencies["@rerun-io/web-viewer-react"] = `^${version}`;
+  pkg.dependencies["@rerun-io/web-viewer"] = `^${version}`;
   fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n");
 '
 

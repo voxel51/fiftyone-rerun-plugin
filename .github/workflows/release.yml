@@ -32,7 +32,7 @@ jobs:
             version="${{ inputs.rerun_version }}"
             source="workflow_dispatch"
           else
-            version="$(npm view @rerun-io/web-viewer-react version)"
+            version="$(npm view @rerun-io/web-viewer version)"
             source="npm"
           fi
 
@@ -73,7 +73,7 @@ jobs:
             const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
             const version = '${{ steps.rerun_version.outputs.version }}';
             pkg.version = version;
-            pkg.dependencies['@rerun-io/web-viewer-react'] = '^' + version;
+            pkg.dependencies['@rerun-io/web-viewer'] = '^' + version;
             fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
           "
           sed -i "s/^version: .*/version: ${{ steps.rerun_version.outputs.version }}/" fiftyone.yaml
@@ -106,7 +106,7 @@ jobs:
           name: v${{ steps.rerun_version.outputs.version }}
           files: fiftyone-rerun-plugin-${{ steps.rerun_version.outputs.version }}.zip
           body: |
-            This plugin release tracks @rerun-io/web-viewer-react ${{ steps.rerun_version.outputs.version }}.
+            This plugin release tracks @rerun-io/web-viewer ${{ steps.rerun_version.outputs.version }}.
 
             For Rerun changelog and release notes, see:
             https://github.com/rerun-io/rerun/releases

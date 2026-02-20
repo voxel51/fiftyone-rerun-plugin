@@ -9,5 +9,11 @@ const __dirname = dirname(__filename);
 const dir = __dirname;
 
 export default defineConfig(dir, {
+  vite: {
+    base: "./",
+    worker: {
+      format: "es",
+    },
+  },
   plugins: [wasm(), topLevelAwait()],
 });

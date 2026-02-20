@@ -1,44 +1,80 @@
 import React, { useMemo } from "react";
+import iframeRuntimeUrl from "./rrd-viewer-runtime.ts?worker&url";
 
-declare global {
-  interface Window {
-    __ENV__: {
-      PORT_RERUN: string;
-    };
+type RrdIframeRendererProps = {
+  url: string;
+};
+
+const IFRAME_SHELL = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      html, body, #root {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+      body {
+        background: #0d1117;
+      }
+      #error {
+        display: none;
+        box-sizing: border-box;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 24px;
+        color: #ffb4b4;
+        font: 13px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        text-align: center;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-rrd-b64="__RERUN_RRD_B64__"></div>
+    <div id="error" role="alert"></div>
+    <script type="module" src="__RERUN_IFRAME_RUNTIME__"></script>
+  </body>
+</html>`;
+
+const toBase64 = (value: string): string => {
+  const bytes = new TextEncoder().encode(value);
+  let binary = "";
+
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
   }
-}
 
-const DEFAULT_RERUN_PORT = 9090;
+  return btoa(binary);
+};
 
-export const RrdIframeRenderer = React.memo(({ url }: { url: string }) => {
-  /**
-   * 1. check if rerunPort is provided in the environment variable
-   * 2. check if rerunPort is injected in the window.__ENV__ object
-   * 3. if not, use the default value
-   */
-  const rerunPort = useMemo(() => {
-    const url = new URL(window.location.href);
-
-    if (typeof process !== "undefined") {
-      if (process.env?.PORT_RERUN) {
-        return parseInt(process.env.PORT_RERUN);
-      }
-
-      if (process.env?.NEXT_PUBLIC_RERUN_PORT) {
-        return parseInt(process.env.NEXT_PUBLIC_PORT_RERUN);
-      }
-    }
-
-    if (window.__ENV__?.PORT_RERUN) {
-      return parseInt(window.__ENV__.PORT_RERUN);
-    }
-
-    return DEFAULT_RERUN_PORT;
-  }, []);
-
-  const iframeSrc = useMemo(() => {
-    return `http://localhost:${rerunPort}/?url=${encodeURIComponent(url)}`;
+export const RrdIframeRenderer = React.memo(({ url }: RrdIframeRendererProps) => {
+  const encodedRrdUrl = useMemo(() => {
+    // Base64 avoids URL/query escaping conflicts when serializing through srcDoc.
+    return toBase64(url);
   }, [url]);
 
-  return <iframe src={iframeSrc} style={{ width: "100%", height: "100%" }} />;
+  const srcDoc = useMemo(() => {
+    return IFRAME_SHELL.replaceAll("__RERUN_IFRAME_RUNTIME__", iframeRuntimeUrl).replaceAll(
+      "__RERUN_RRD_B64__",
+      encodedRrdUrl
+    );
+  }, [encodedRrdUrl]);
+
+  return (
+    <iframe
+      allow="fullscreen"
+      sandbox="allow-downloads allow-forms allow-popups allow-same-origin allow-scripts"
+      srcDoc={srcDoc}
+      style={{ width: "100%", height: "100%", border: 0, display: "block" }}
+      title="Rerun Viewer"
+    />
+  );
 });

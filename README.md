@@ -24,7 +24,7 @@ The zip contains:
 - `fiftyone.yaml` (plugin metadata with the matching plugin version)
 
 Version coupling:
-- Plugin release version `vX.Y.Z` is paired with `@rerun-io/web-viewer-react` `^X.Y.Z`
+- Plugin release version `vX.Y.Z` is paired with `@rerun-io/web-viewer` `^X.Y.Z`
 - Choose a plugin release that matches the Rerun web viewer version you want to use.
 
 ## Local versioned build
@@ -79,9 +79,9 @@ python examples/load-nuscenes.py --nuscenes-data-dir /path/to/nuscenes --rrd --f
 Then launch the App:
 
 ```shell
-# start rerun server
-rerun --serve
-
 # start fiftyone app
 fiftyone app launch
 ```
+
+No separate `rerun --serve` process is required. The plugin loads `.rrd` URLs
+directly with `@rerun-io/web-viewer` in an isolated iframe runtime.

@@ -1,8 +1,8 @@
 import * as fos from "@fiftyone/state";
 import { getFieldsWithEmbeddedDocType } from "@fiftyone/utilities";
-import WebViewer from "@rerun-io/web-viewer-react";
-import { startTransition, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
+import { RrdIframeRenderer } from "./RrdIframeRenderer";
 
 export const RerunFileDescriptor = {
   EMBEDDED_DOC_TYPE: "fiftyone.utils.rerun.RrdFile",
@@ -14,9 +14,14 @@ type RerunFieldDescriptor = {
   version: string;
 };
 
+type RrdParams = {
+  url: string;
+  version?: string;
+};
+
 export const RerunViewerReact = () => {
   const currentSample = useRecoilValue(fos.modalSample);
-  const [stableRrdParams, setStableRrdParams] = useState<any>(null);
+  const [stableRrdParams, setStableRrdParams] = useState<RrdParams | null>(null);
 
   const schema = useRecoilValue(
     fos.fieldSchema({ space: fos.State.SPACE.SAMPLE })
@@ -31,7 +36,7 @@ export const RerunViewerReact = () => {
     [schema]
   );
 
-  const rrdParams = useMemo(() => {
+  const rrdParams = useMemo<RrdParams | undefined>(() => {
     if (!rerunFieldPath || !currentSample?.urls) {
       return undefined;
     }
@@ -62,24 +67,25 @@ export const RerunViewerReact = () => {
 
   useEffect(() => {
     if (rrdParams) {
-      startTransition(() => {
-        setStableRrdParams(rrdParams);
+      setStableRrdParams((previous) => {
+        if (
+          previous?.url === rrdParams.url &&
+          previous?.version === rrdParams.version
+        ) {
+          return previous;
+        }
+
+        return rrdParams;
       });
+      return;
     }
+
+    setStableRrdParams(null);
   }, [rrdParams]);
 
   if (!stableRrdParams) {
     return <div>Resolving URL...</div>;
   }
 
-  return (
-    <WebViewer
-      rrd={stableRrdParams.url}
-      height="100%"
-      width="100%"
-      onReady={() => {
-        console.log("web viewer ready");
-      }}
-    />
-  );
+  return <RrdIframeRenderer url={stableRrdParams.url} />;
 };

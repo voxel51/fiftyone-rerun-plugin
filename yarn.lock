@@ -1086,19 +1086,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rerun-io/web-viewer-react@npm:^0.28.2":
-  version: 0.28.2
-  resolution: "@rerun-io/web-viewer-react@npm:0.28.2"
-  dependencies:
-    "@rerun-io/web-viewer": "npm:0.28.2"
-  peerDependencies:
-    "@types/react": ^18.2.33 || ^19.0.0
-    react: ^18.2.0 || ^19.0.0
-  checksum: 10c0/8cd139956f8cc966c4cf3c0fd9bb03ff93e157040cc9d9d7ce43c1c1a13833d06389dd8dbe7310a3ee0ff172d1edd9cc5d946349120ffdfd5974c0fba3c588d7
-  languageName: node
-  linkType: hard
-
-"@rerun-io/web-viewer@npm:0.28.2":
+"@rerun-io/web-viewer@npm:^0.28.2":
   version: 0.28.2
   resolution: "@rerun-io/web-viewer@npm:0.28.2"
   checksum: 10c0/a21aa6cca0ff10d8dddfbaa3b10cbe3fc61a0d4cd389be04d5d897927749b399210b613cc758d8cb3a16c7d1dde963ee6258c8a9440e7dc4324ec1bf0a9930ac
@@ -1618,7 +1606,7 @@ __metadata:
     "@fiftyone/relay": "portal:../fiftyone/app/packages/relay"
     "@fiftyone/state": "portal:../fiftyone/app/packages/state"
     "@fiftyone/utilities": "portal:../fiftyone/app/packages/utilities"
-    "@rerun-io/web-viewer-react": "npm:^0.28.2"
+    "@rerun-io/web-viewer": "npm:^0.28.2"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
     "@types/node": "npm:^22.7.6"
     "@vitejs/plugin-react": "npm:^4.3.3"
