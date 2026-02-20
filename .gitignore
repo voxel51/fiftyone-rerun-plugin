@@ -8,6 +8,7 @@
 !.yarnrc.yml
 .DS_Store
 
+dist
 # Yarn Cache and Unplugged (should be ignored)
 .yarn/cache
 .yarn/unplugged

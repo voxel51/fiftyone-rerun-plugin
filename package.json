@@ -13,6 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fiftyone/commands": "portal:../fiftyone/app/packages/commands",
     "@fiftyone/components": "portal:../fiftyone/app/packages/components",
     "@fiftyone/looker": "portal:../fiftyone/app/packages/looker",
     "@fiftyone/operators": "portal:../fiftyone/app/packages/operators",
@@ -27,6 +28,7 @@
     "recoil": "^0.7.7"
   },
   "resolutions": {
+    "@fiftyone/commands": "portal:../fiftyone/app/packages/commands",
     "@fiftyone/utilities": "portal:../fiftyone/app/packages/utilities",
     "@fiftyone/state": "portal:../fiftyone/app/packages/state",
     "@fiftyone/looker": "portal:../fiftyone/app/packages/looker",
