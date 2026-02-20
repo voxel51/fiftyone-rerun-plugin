@@ -21,7 +21,9 @@ type RrdParams = {
 
 export const RerunViewerReact = () => {
   const currentSample = useRecoilValue(fos.modalSample);
-  const [stableRrdParams, setStableRrdParams] = useState<RrdParams | null>(null);
+  const [stableRrdParams, setStableRrdParams] = useState<RrdParams | null>(
+    null
+  );
 
   const schema = useRecoilValue(
     fos.fieldSchema({ space: fos.State.SPACE.SAMPLE })
@@ -87,5 +89,7 @@ export const RerunViewerReact = () => {
     return <div>Resolving URL...</div>;
   }
 
-  return <RrdIframeRenderer url={stableRrdParams.url} />;
+  return (
+    <RrdIframeRenderer url={stableRrdParams.url} key={stableRrdParams.url} />
+  );
 };
