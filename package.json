@@ -1,5 +1,5 @@
 {
-  "name": "@fiftyone/rerun-plugin",
+  "name": "@voxel51/rerun-plugin",
   "version": "1.0.0",
   "main": "src/index.tsx",
   "type": "module",

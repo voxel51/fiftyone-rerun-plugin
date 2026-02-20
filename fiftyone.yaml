@@ -1,4 +1,4 @@
-name: "@fiftyone/rerun-plugin"
+name: "@voxel51/rerun-plugin"
 description: Rerun plugin for FiftyOne
 version: 1.0.0
 fiftyone:
