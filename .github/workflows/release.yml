@@ -4,60 +4,105 @@ on:
   workflow_dispatch:
     inputs:
       rerun_version:
-        description: "Rerun version to release (e.g. 0.22.1)"
+        description: "Rerun version to release (e.g. 0.29.0)"
         required: true
         type: string
+  schedule:
+    - cron: "0 */6 * * *"
 
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    concurrency:
+      group: rerun-plugin-release
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
-
-      - name: Clone fiftyone (for portal deps)
-        run: git clone --depth 1 --branch main https://github.com/voxel51/fiftyone.git ../fiftyone
 
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
 
+      - name: Resolve rerun version
+        id: rerun_version
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            version="${{ inputs.rerun_version }}"
+            source="workflow_dispatch"
+          else
+            version="$(npm view @rerun-io/web-viewer-react version)"
+            source="npm"
+          fi
+
+          if [[ -z "$version" ]]; then
+            echo "Unable to resolve rerun version" >&2
+            exit 1
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "source=$source" >> "$GITHUB_OUTPUT"
+          echo "Resolved rerun version: $version ($source)"
+
+      - name: Skip if release already exists
+        id: release_check
+        run: |
+          version="${{ steps.rerun_version.outputs.version }}"
+          if git ls-remote --tags --exit-code origin "refs/tags/v${version}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release v${version} already exists; skipping."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "No release for v${version}; continuing."
+          fi
+
+      - name: Clone fiftyone (for portal deps)
+        if: steps.release_check.outputs.exists != 'true'
+        run: git clone --depth 1 --branch main https://github.com/voxel51/fiftyone.git ../fiftyone
+
       - name: Enable Corepack (for Yarn 4)
+        if: steps.release_check.outputs.exists != 'true'
         run: corepack enable
 
       - name: Update versions
+        if: steps.release_check.outputs.exists != 'true'
         run: |
           node -e "
             const fs = require('fs');
             const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-            const version = '${{ inputs.rerun_version }}';
+            const version = '${{ steps.rerun_version.outputs.version }}';
             pkg.version = version;
             pkg.dependencies['@rerun-io/web-viewer-react'] = '^' + version;
             fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
           "
-          sed -i "s/^version: .*/version: ${{ inputs.rerun_version }}/" fiftyone.yaml
+          sed -i "s/^version: .*/version: ${{ steps.rerun_version.outputs.version }}/" fiftyone.yaml
 
       - name: Create .env.dev
+        if: steps.release_check.outputs.exists != 'true'
         run: echo 'export FIFTYONE_DIR=${{ github.workspace }}/../fiftyone' > .env.dev
 
       - name: Install dependencies
+        if: steps.release_check.outputs.exists != 'true'
         run: yarn install --no-immutable
 
       - name: Build
+        if: steps.release_check.outputs.exists != 'true'
         run: yarn build
 
       - name: Create release zip
+        if: steps.release_check.outputs.exists != 'true'
         run: |
           mkdir -p release/fiftyone-rerun-plugin
           cp -r dist release/fiftyone-rerun-plugin/
           cp fiftyone.yaml release/fiftyone-rerun-plugin/
-          cd release && zip -r ../fiftyone-rerun-plugin-${{ inputs.rerun_version }}.zip fiftyone-rerun-plugin
+          cd release && zip -r ../fiftyone-rerun-plugin-${{ steps.rerun_version.outputs.version }}.zip fiftyone-rerun-plugin
 
       - name: Create GitHub Release
+        if: steps.release_check.outputs.exists != 'true'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ inputs.rerun_version }}
-          name: v${{ inputs.rerun_version }}
-          files: fiftyone-rerun-plugin-${{ inputs.rerun_version }}.zip
+          tag_name: v${{ steps.rerun_version.outputs.version }}
+          name: v${{ steps.rerun_version.outputs.version }}
+          files: fiftyone-rerun-plugin-${{ steps.rerun_version.outputs.version }}.zip
           generate_release_notes: true
