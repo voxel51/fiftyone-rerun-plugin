@@ -1,0 +1,75 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      rerun_version:
+        description: "Rerun version to release (e.g. 0.22.1)"
+        required: true
+        type: string
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Enable Corepack (for Yarn 4)
+        run: corepack enable
+
+      - name: Patch package.json for CI
+        run: |
+          # Update @rerun-io/web-viewer-react version
+          # Replace portal: deps with * (they are externalized at build time)
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            const version = '${{ inputs.rerun_version }}';
+
+            pkg.version = version;
+            pkg.dependencies['@rerun-io/web-viewer-react'] = '^' + version;
+
+            for (const section of ['dependencies', 'resolutions']) {
+              for (const [key, value] of Object.entries(pkg[section] || {})) {
+                if (typeof value === 'string' && value.startsWith('portal:')) {
+                  pkg[section][key] = '*';
+                }
+              }
+            }
+
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
+
+      - name: Update fiftyone.yaml version
+        run: |
+          sed -i "s/^version: .*/version: ${{ inputs.rerun_version }}/" fiftyone.yaml
+
+      - name: Create .env.dev for build
+        run: echo 'export FIFTYONE_DIR=/tmp' > .env.dev
+
+      - name: Install dependencies
+        run: yarn install --no-immutable
+
+      - name: Build
+        run: yarn build
+
+      - name: Create release zip
+        run: |
+          mkdir -p release/fiftyone-rerun-plugin
+          cp -r dist release/fiftyone-rerun-plugin/
+          cp fiftyone.yaml release/fiftyone-rerun-plugin/
+          cd release && zip -r ../fiftyone-rerun-plugin-${{ inputs.rerun_version }}.zip fiftyone-rerun-plugin
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ inputs.rerun_version }}
+          name: v${{ inputs.rerun_version }}
+          files: fiftyone-rerun-plugin-${{ inputs.rerun_version }}.zip
+          generate_release_notes: true
