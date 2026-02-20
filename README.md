@@ -13,6 +13,22 @@ pip install fiftyone rerun-sdk
 fiftyone plugins download https://github.com/voxel51/fiftyone-rerun-plugin
 ```
 
+## Release artifacts and Rerun version compatibility
+
+Prebuilt plugin artifacts are published on the repository's
+[GitHub Releases](https://github.com/voxel51/fiftyone-rerun-plugin/releases) page.
+Each release includes a zip file named like:
+
+`fiftyone-rerun-plugin-<version>.zip`
+
+The zip contains:
+- `dist/` (the built plugin bundle)
+- `fiftyone.yaml` (plugin metadata with the matching plugin version)
+
+Version coupling:
+- Plugin release version `vX.Y.Z` is paired with `@rerun-io/web-viewer-react` `^X.Y.Z`
+- Choose a plugin release that matches the Rerun web viewer version you want to use.
+
 ## Example usage with NuScenes dataset
 
 We have a Python script in the [examples](examples/load-nuscenes.py) folder that:
