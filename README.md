@@ -82,6 +82,3 @@ Then launch the App:
 # start fiftyone app
 fiftyone app launch
 ```
-
-No separate `rerun --serve` process is required. The plugin loads `.rrd` URLs
-directly with `@rerun-io/web-viewer` in an isolated iframe runtime.
