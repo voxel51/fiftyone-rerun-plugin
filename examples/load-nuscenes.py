@@ -41,6 +41,92 @@ REFERENCE_COORDINATES = {
 }
 
 
+def create_recording_stream(application_id: str, recording_id: str) -> rr.RecordingStream:
+    # `rr.new_recording` existed in older SDK versions; newer versions use RecordingStream().
+    if hasattr(rr, "new_recording"):
+        return rr.new_recording(
+            application_id=application_id, recording_id=recording_id
+        )
+
+    if hasattr(rr, "RecordingStream"):
+        return rr.RecordingStream(
+            application_id=application_id,
+            recording_id=recording_id,
+        )
+
+    raise AttributeError(
+        "rerun SDK does not expose a supported recording constructor"
+    )
+
+
+def save_recording_stream(
+    stream: rr.RecordingStream, rrd_path: pathlib.Path, blueprint: rrb.BlueprintLike
+) -> None:
+    # Prefer stream.save when available; fall back to module-level save API.
+    if hasattr(stream, "save"):
+        stream.save(rrd_path, default_blueprint=blueprint)
+        return
+
+    rr.save(rrd_path, default_blueprint=blueprint, recording=stream)
+
+
+def set_time_seconds_compat(
+    stream: rr.RecordingStream, timeline: str, seconds: float
+) -> None:
+    if hasattr(stream, "set_time_seconds"):
+        stream.set_time_seconds(timeline, seconds)
+        return
+
+    if hasattr(stream, "set_time"):
+        stream.set_time(timeline, timestamp=seconds)
+        return
+
+    if hasattr(rr, "set_time_seconds"):
+        try:
+            rr.set_time_seconds(timeline, seconds, recording=stream)
+        except TypeError:
+            rr.set_time_seconds(timeline, seconds)
+        return
+
+    if hasattr(rr, "set_time"):
+        try:
+            rr.set_time(timeline, timestamp=seconds, recording=stream)
+        except TypeError:
+            rr.set_time(timeline, timestamp=seconds)
+        return
+
+    raise AttributeError("rerun SDK does not expose a supported timeline API")
+
+
+def transform3d_compat(
+    *,
+    translation: Sequence[float],
+    rotation_xyzw: Sequence[float],
+    from_parent: bool,
+    axis_length: float | None = None,
+) -> rr.Transform3D:
+    base_kwargs = {
+        "translation": translation,
+        "rotation": rr.Quaternion(xyzw=rotation_xyzw),
+    }
+    if hasattr(rr, "TransformRelation"):
+        base_kwargs["relation"] = (
+            rr.TransformRelation.ParentFromChild
+            if from_parent
+            else rr.TransformRelation.ChildFromParent
+        )
+    else:
+        base_kwargs["from_parent"] = from_parent
+
+    if axis_length is not None:
+        try:
+            return rr.Transform3D(axis_length=axis_length, **base_kwargs)
+        except TypeError:
+            pass
+
+    return rr.Transform3D(**base_kwargs)
+
+
 def get_coordinate(
     ref_lat: float, ref_lon: float, bearing: float, dist: float
 ) -> tuple[float, float]:
@@ -132,15 +218,15 @@ def log_lidar_and_ego_pose(
             break
 
         # timestamps are in microseconds
-        stream.set_time_seconds("timestamp", sample_data["timestamp"] * 1e-6)
+        set_time_seconds_compat(stream, "timestamp", sample_data["timestamp"] * 1e-6)
 
         ego_pose = nusc.get("ego_pose", sample_data["ego_pose_token"])
         rotation_xyzw = np.roll(ego_pose["rotation"], shift=-1)  # go from wxyz to xyzw
         stream.log(
             "world/ego_vehicle",
-            rr.Transform3D(
+            transform3d_compat(
                 translation=ego_pose["translation"],
-                rotation=rr.Quaternion(xyzw=rotation_xyzw),
+                rotation_xyzw=rotation_xyzw,
                 from_parent=False,
             ),
         )
@@ -170,7 +256,7 @@ def log_radars(
             if max_timestamp_us < sample_data["timestamp"]:
                 break
             sensor_name = sample_data["channel"]
-            rr.set_time_seconds("timestamp", sample_data["timestamp"] * 1e-6)
+            set_time_seconds_compat(stream, "timestamp", sample_data["timestamp"] * 1e-6)
             data_file_path = nusc.dataroot / sample_data["filename"]
             pointcloud = nuscenes.RadarPointCloud.from_file(str(data_file_path))
             points = pointcloud.points[:3].T  # shape after transposing: (num_points, 3)
@@ -198,7 +284,7 @@ def log_annotations(
         sample_data = nusc.get("sample", current_sample_token)
         if max_timestamp_us < sample_data["timestamp"]:
             break
-        stream.set_time_seconds("timestamp", sample_data["timestamp"] * 1e-6)
+        set_time_seconds_compat(stream, "timestamp", sample_data["timestamp"] * 1e-6)
         ann_tokens = sample_data["anns"]
         sizes = []
         centers = []
@@ -245,9 +331,9 @@ def log_front_camera(
     )  # go from wxyz to xyzw
     stream.log(
         f"world/ego_vehicle/CAM_FRONT",
-        rr.Transform3D(
+        transform3d_compat(
             translation=calibrated_sensor["translation"],
-            rotation=rr.Quaternion(xyzw=rotation_xyzw),
+            rotation_xyzw=rotation_xyzw,
             from_parent=False,
         ),
         static=True,
@@ -276,9 +362,9 @@ def log_sensor_calibration(
     )  # go from wxyz to xyzw
     stream.log(
         f"world/ego_vehicle/{sensor_name}",
-        rr.Transform3D(
+        transform3d_compat(
             translation=calibrated_sensor["translation"],
-            rotation=rr.Quaternion(xyzw=rotation_xyzw),
+            rotation_xyzw=rotation_xyzw,
             from_parent=False,
             axis_length=0.0,
         ),
@@ -332,10 +418,6 @@ def setup_rerun(nusc, output_dir):
         rrb.Spatial3DView(
             name="3D",
             origin="world",
-            # Default for `ImagePlaneDistance` so that the pinhole frustum visualizations don't take up too much space.
-            defaults=[rr.components.ImagePlaneDistance(4.0)],
-            # Transform arrows for the vehicle shouldn't be too long.
-            overrides={"world/ego_vehicle": [rr.components.AxisLength(3.0)]},
         ),
         rrb.MapView(
             origin="world",
@@ -351,7 +433,7 @@ def setup_rerun(nusc, output_dir):
     all_scene_names = [scene["name"] for scene in nusc.scene]
 
     for scene_name in all_scene_names:
-        this_scene_recording = rr.new_recording(
+        this_scene_recording = create_recording_stream(
             application_id="nuscenes", recording_id=scene_name
         )
 
@@ -365,7 +447,7 @@ def setup_rerun(nusc, output_dir):
             print(f"{rrd_path} already exists, overwriting...")
             rrd_path.unlink()
 
-        this_scene_recording.save(rrd_path, default_blueprint=blueprint)
+        save_recording_stream(this_scene_recording, rrd_path, blueprint)
         print(f"{rrd_path} saved")
 
 
