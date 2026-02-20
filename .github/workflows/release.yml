@@ -105,4 +105,13 @@ jobs:
           tag_name: v${{ steps.rerun_version.outputs.version }}
           name: v${{ steps.rerun_version.outputs.version }}
           files: fiftyone-rerun-plugin-${{ steps.rerun_version.outputs.version }}.zip
-          generate_release_notes: true
+          body: |
+            This plugin release tracks `@rerun-io/web-viewer-react` `${{ steps.rerun_version.outputs.version }}`.
+
+            For Rerun changelog and release notes, see:
+            https://github.com/rerun-io/rerun/releases
+
+            Download the plugin from **Assets**:
+            - `fiftyone-rerun-plugin-${{ steps.rerun_version.outputs.version }}.zip`
+
+            Ignore GitHub auto-generated source archives (`Source code (zip)` / `Source code (tar.gz)`).
