@@ -16,42 +16,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Clone fiftyone (for portal deps)
+        run: git clone --depth 1 --branch main https://github.com/voxel51/fiftyone.git ../fiftyone
+
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
 
       - name: Enable Corepack (for Yarn 4)
         run: corepack enable
 
-      - name: Patch package.json for CI
+      - name: Update versions
         run: |
-          # Update @rerun-io/web-viewer-react version
-          # Replace portal: deps with * (they are externalized at build time)
           node -e "
             const fs = require('fs');
             const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
             const version = '${{ inputs.rerun_version }}';
-
             pkg.version = version;
             pkg.dependencies['@rerun-io/web-viewer-react'] = '^' + version;
-
-            for (const section of ['dependencies', 'resolutions']) {
-              for (const [key, value] of Object.entries(pkg[section] || {})) {
-                if (typeof value === 'string' && value.startsWith('portal:')) {
-                  pkg[section][key] = '*';
-                }
-              }
-            }
-
             fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
           "
-
-      - name: Update fiftyone.yaml version
-        run: |
           sed -i "s/^version: .*/version: ${{ inputs.rerun_version }}/" fiftyone.yaml
 
-      - name: Create .env.dev for build
-        run: echo 'export FIFTYONE_DIR=/tmp' > .env.dev
+      - name: Create .env.dev
+        run: echo 'export FIFTYONE_DIR=${{ github.workspace }}/../fiftyone' > .env.dev
 
       - name: Install dependencies
         run: yarn install --no-immutable
