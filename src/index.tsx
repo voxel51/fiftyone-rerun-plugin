@@ -16,7 +16,7 @@ fop.registerComponent({
   type: fop.PluginComponentType.Panel,
   panelOptions: {
     surfaces: "modal",
-    helpMarkdown: `Rereun viewer for FiftyOne`,
+    helpMarkdown: `Rerun viewer for FiftyOne`,
     isNew: false,
   },
 });

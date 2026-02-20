@@ -27,6 +27,26 @@ Version coupling:
 - Plugin release version `vX.Y.Z` is paired with `@rerun-io/web-viewer-react` `^X.Y.Z`
 - Choose a plugin release that matches the Rerun web viewer version you want to use.
 
+## Local versioned build
+
+To build a versioned plugin artifact locally:
+
+```shell
+./scripts/build-release-local.sh 0.29.2
+```
+
+This produces:
+- `dist_artifacts/fiftyone-rerun-plugin-0.29.2/`
+
+To also generate a zip:
+
+```shell
+./scripts/build-release-local.sh --zip 0.29.2
+```
+
+This additionally produces:
+- `dist/fiftyone-rerun-plugin-0.29.2.zip`
+
 ## Example usage with NuScenes dataset
 
 We have a Python script in the [examples](examples/load-nuscenes.py) folder that:

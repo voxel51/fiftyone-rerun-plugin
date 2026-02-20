@@ -1,6 +1,6 @@
 {
   "name": "@voxel51/rerun-plugin",
-  "version": "0.27.2",
+  "version": "0.28.2",
   "main": "src/index.tsx",
   "type": "module",
   "license": "MIT",

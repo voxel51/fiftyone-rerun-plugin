@@ -9,6 +9,8 @@
 .DS_Store
 
 dist
+dist_zips
+dist_artifacts
 # Yarn Cache and Unplugged (should be ignored)
 .yarn/cache
 .yarn/unplugged
