@@ -16,7 +16,31 @@ type RerunFieldDescriptor = {
 
 type RrdParams = {
   url: string;
+  identityKey: string;
   version?: string;
+};
+
+const shouldUseStreamingChannel = (url: URL): boolean => {
+  return url.pathname.endsWith("/media") && url.searchParams.has("filepath");
+};
+
+const getRrdIdentityKey = (rawUrl: string): string => {
+  try {
+    const parsed = new URL(rawUrl, window.location.href);
+    const normalized = parsed.toString();
+
+    if (parsed.protocol === "http:") {
+      return normalized;
+    }
+
+    if (parsed.protocol === "https:" && !shouldUseStreamingChannel(parsed)) {
+      return normalized.split("?")[0];
+    }
+
+    return normalized;
+  } catch {
+    return rawUrl.split("?")[0] || rawUrl;
+  }
 };
 
 export const RerunViewerReact = () => {
@@ -59,6 +83,7 @@ export const RerunViewerReact = () => {
       const url = fos.getSampleSrc(rrdFilePath);
       return {
         url,
+        identityKey: getRrdIdentityKey(url),
         version: filePathAndVersion?.version,
       };
     } catch (error) {
@@ -71,7 +96,7 @@ export const RerunViewerReact = () => {
     if (rrdParams) {
       setStableRrdParams((previous) => {
         if (
-          previous?.url === rrdParams.url &&
+          previous?.identityKey === rrdParams.identityKey &&
           previous?.version === rrdParams.version
         ) {
           return previous;
@@ -90,6 +115,9 @@ export const RerunViewerReact = () => {
   }
 
   return (
-    <RrdIframeRenderer url={stableRrdParams.url} key={stableRrdParams.url} />
+    <RrdIframeRenderer
+      url={stableRrdParams.url}
+      key={stableRrdParams.identityKey}
+    />
   );
 };

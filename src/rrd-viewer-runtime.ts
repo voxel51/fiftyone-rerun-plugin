@@ -97,8 +97,6 @@ const normalizeRrdUrl = ({
     }
   }
 
-  console.log(">>>candidate is ", candidate);
-
   if (!candidate) {
     return null;
   }
