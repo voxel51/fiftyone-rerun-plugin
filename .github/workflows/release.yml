@@ -16,7 +16,7 @@ jobs:
     permissions:
       contents: write
     concurrency:
-      group: rerun-plugin-release
+      group: rerun-plugin-release-${{ github.event_name }}-${{ inputs.rerun_version || 'auto' }}
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
