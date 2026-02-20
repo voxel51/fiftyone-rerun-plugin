@@ -32,7 +32,6 @@ wget https://www.nuscenes.org/data/v1.0-mini.tgz
 tar -xvf v1.0-mini.tgz
 ```
 
-```shell
 Run the script to prepare the dataset:
 
 ```shell
