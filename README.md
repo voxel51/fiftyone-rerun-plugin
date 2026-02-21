@@ -47,7 +47,17 @@ To also generate a zip:
 This additionally produces:
 - `dist/fiftyone-rerun-plugin-0.29.2.zip`
 
+## Usage
+
+Samples with a `fiftyone.utils.rerun.RrdFile` field will enable the Rerun panel in the sample modal view. To open the panel, click on a sample to open the modal, then click the **"+"** button at the top and select **"Rerun"**.
+
 ## Example usage with NuScenes dataset
+
+Install the required dependencies:
+
+```shell
+pip install nuscenes-devkit rerun-sdk open3d matplotlib Pillow
+```
 
 We have a Python script in the [examples](examples/load-nuscenes.py) folder that:
 1. Creates RRD files with a timeline containing lidar points of each scene in the NuScenes mini dataset
