@@ -5,12 +5,6 @@ A plugin that enables users to visualize [Rerun](https://rerun.io/) data files
 
 ![rerun-fo-nuscenes-small](https://github.com/user-attachments/assets/d93e86bb-ae59-493b-9028-4b9c677afca9)
 
-## Installation
-
-```shell
-fiftyone plugins download https://github.com/voxel51/fiftyone-rerun-plugin
-```
-
 ## Release artifacts and Rerun version compatibility
 
 Prebuilt plugin artifacts are published on the repository's
