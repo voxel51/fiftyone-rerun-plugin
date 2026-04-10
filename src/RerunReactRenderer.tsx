@@ -72,7 +72,7 @@ export const RerunViewerReact = () => {
         rerunFieldPath
       ] as unknown as RerunFieldDescriptor;
 
-      const urlsStandardized = fos.getStandardizedUrls(currentSample.urls);
+      const urlsStandardized = fos.getNormalizedUrls(currentSample.urls);
 
       const rrdFilePath = urlsStandardized[`${rerunFieldPath}.filepath`];
 
