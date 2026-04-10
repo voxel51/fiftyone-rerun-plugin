@@ -18,7 +18,7 @@ The zip contains:
 - `fiftyone.yaml` (plugin metadata with the matching plugin version)
 
 Version coupling:
-- Plugin release version `vX.Y.Z` is paired with `@rerun-io/web-viewer` `^X.Y.Z`
+- Plugin release version `vX.Y.Z` is paired with exact `@rerun-io/web-viewer` version `X.Y.Z`
 - Choose a plugin release that matches the Rerun web viewer version you want to use.
 
 ## Local versioned build
@@ -43,7 +43,54 @@ This additionally produces:
 
 ## Usage
 
-Samples with a `fiftyone.utils.rerun.RrdFile` field will enable the Rerun panel in the sample modal view. To open the panel, click on a sample to open the modal, then click the **"+"** button at the top and select **"Rerun"**.
+This plugin supports two dataset construction patterns:
+
+1. Samples that contain a `fiftyone.utils.rerun.RrdFile` field
+2. Samples whose primary media filepath ends in `.rrd`
+
+### Pattern 1: `RrdFile` sample fields
+
+Use this pattern when the `.rrd` file is auxiliary media attached to another
+sample, such as an image, video, or grouped sample. In the FiftyOne App, these
+samples show a **Rerun** affordance in the sample modal as a modal panel. Open
+the sample in the modal, click the **"+"** button, and select **"Rerun"**.
+
+```python
+import fiftyone as fo
+from fiftyone.utils.rerun import RrdFile
+
+dataset = fo.Dataset("rerun-field-dataset")
+
+dataset.add_sample(
+    fo.Sample(
+        filepath="/path/to/cover-image.png",
+        rerun_recording=RrdFile(
+            filepath="/path/to/recording.rrd"
+        ),
+    )
+)
+```
+
+### Pattern 2: direct `.rrd` samples
+
+Use this pattern when the `.rrd` file itself is the primary sample media. In
+the FiftyOne App, opening one of these samples in the modal will launch the
+Rerun renderer directly, without requiring a separate modal panel selection.
+
+```python
+import fiftyone as fo
+
+dataset = fo.Dataset("rerun-direct-dataset")
+
+dataset.add_sample(
+    fo.Sample(
+        filepath="/path/to/recording.rrd",
+    )
+)
+```
+
+In this mode, grid rendering remains disabled, and the custom Rerun renderer is
+activated only in the modal for `.rrd` samples.
 
 ## Example usage with NuScenes dataset
 
@@ -56,6 +103,8 @@ pip install nuscenes-devkit rerun-sdk open3d matplotlib Pillow
 We have a Python script in the [examples](examples/load-nuscenes.py) folder that:
 1. Creates RRD files with a timeline containing lidar points of each scene in the NuScenes mini dataset
 2. Creates a grouped FiftyOne dataset with all camera images, lidar, radar, as well as references to the RRD files from (1)
+
+This example uses the `RrdFile` sample field pattern described above.
 
 Before you run the script, make sure you have the NuScenes mini split dataset downloaded and extracted.
 You can download it from [here](https://www.nuscenes.org/data/v1.0-mini.tgz).
