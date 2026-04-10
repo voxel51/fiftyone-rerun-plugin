@@ -1,6 +1,8 @@
 import * as fop from "@fiftyone/plugins";
 import * as futil from "@fiftyone/utilities";
-import { RerunFileDescriptor, RerunViewer } from "./RerunPanel";
+import { RerunViewer } from "./RerunPanel";
+import { RerunSampleRenderer } from "./RerunReactRenderer";
+import { RerunFileDescriptor } from "./rerunUtils";
 
 fop.registerComponent({
   name: "Rerun",
@@ -18,5 +20,21 @@ fop.registerComponent({
     surfaces: "modal",
     helpMarkdown: `Rerun viewer for FiftyOne`,
     isNew: false,
+  },
+});
+
+fop.registerComponent({
+  name: "RerunSampleRenderer",
+  label: "Rerun",
+  component: RerunSampleRenderer,
+  type: fop.PluginComponentType.SampleRenderer,
+  activator: () => true,
+  sampleRendererOptions: {
+    supports: {
+      extensions: ["rrd"],
+    },
+    grid: {
+      enabled: false,
+    },
   },
 });

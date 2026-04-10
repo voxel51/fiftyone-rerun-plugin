@@ -1,12 +1,14 @@
+import type { SampleRendererProps } from "@fiftyone/plugins";
 import * as fos from "@fiftyone/state";
 import { getFieldsWithEmbeddedDocType } from "@fiftyone/utilities";
 import { useEffect, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { RrdIframeRenderer } from "./RrdIframeRenderer";
-
-export const RerunFileDescriptor = {
-  EMBEDDED_DOC_TYPE: "fiftyone.utils.rerun.RrdFile",
-};
+import { RerunViewerContainer } from "./RerunViewerContainer";
+import {
+  getRrdIdentityKey,
+  RerunFileDescriptor,
+  type RrdSource,
+} from "./rerunUtils";
 
 type RerunFieldDescriptor = {
   _cls: "RrdFile";
@@ -14,55 +16,29 @@ type RerunFieldDescriptor = {
   version: string;
 };
 
-type RrdParams = {
-  url: string;
-  identityKey: string;
-  version?: string;
-};
-
-const shouldUseStreamingChannel = (url: URL): boolean => {
-  return url.pathname.endsWith("/media") && url.searchParams.has("filepath");
-};
-
-const getRrdIdentityKey = (rawUrl: string): string => {
-  try {
-    const parsed = new URL(rawUrl, window.location.href);
-    const normalized = parsed.toString();
-
-    if (parsed.protocol === "http:") {
-      return normalized;
-    }
-
-    if (parsed.protocol === "https:" && !shouldUseStreamingChannel(parsed)) {
-      return normalized.split("?")[0];
-    }
-
-    return normalized;
-  } catch {
-    return rawUrl.split("?")[0] || rawUrl;
-  }
-};
-
+/**
+ * Resolves the embedded RRD reference for the current modal sample panel.
+ */
 export const RerunViewerReact = () => {
   const currentSample = useRecoilValue(fos.modalSample);
-  const [stableRrdParams, setStableRrdParams] = useState<RrdParams | null>(
-    null
+  const [stableRrdSource, setStableRrdSource] = useState<RrdSource | null>(
+    null,
   );
 
   const schema = useRecoilValue(
-    fos.fieldSchema({ space: fos.State.SPACE.SAMPLE })
+    fos.fieldSchema({ space: fos.State.SPACE.SAMPLE }),
   );
 
   const rerunFieldPath = useMemo(
     () =>
       getFieldsWithEmbeddedDocType(
         schema,
-        RerunFileDescriptor.EMBEDDED_DOC_TYPE
+        RerunFileDescriptor.EMBEDDED_DOC_TYPE,
       ).at(0)?.path,
-    [schema]
+    [schema],
   );
 
-  const rrdParams = useMemo<RrdParams | undefined>(() => {
+  const rrdSource = useMemo<RrdSource | undefined>(() => {
     if (!rerunFieldPath || !currentSample?.urls) {
       return undefined;
     }
@@ -93,31 +69,44 @@ export const RerunViewerReact = () => {
   }, [currentSample, rerunFieldPath]);
 
   useEffect(() => {
-    if (rrdParams) {
-      setStableRrdParams((previous) => {
+    if (rrdSource) {
+      setStableRrdSource((previous) => {
         if (
-          previous?.identityKey === rrdParams.identityKey &&
-          previous?.version === rrdParams.version
+          previous?.identityKey === rrdSource.identityKey &&
+          previous?.version === rrdSource.version
         ) {
           return previous;
         }
 
-        return rrdParams;
+        return rrdSource;
       });
       return;
     }
 
-    setStableRrdParams(null);
-  }, [rrdParams]);
+    setStableRrdSource(null);
+  }, [rrdSource]);
 
-  if (!stableRrdParams) {
-    return <div>Resolving URL...</div>;
+  if (!stableRrdSource) {
+    return <RerunViewerContainer rrdSource={null} />;
   }
 
-  return (
-    <RrdIframeRenderer
-      url={stableRrdParams.url}
-      key={stableRrdParams.identityKey}
-    />
-  );
+  return <RerunViewerContainer rrdSource={stableRrdSource} />;
+};
+
+/**
+ * Sample renderer entrypoint for direct `.rrd` media rendered in the modal.
+ */
+export const RerunSampleRenderer = ({ ctx }: SampleRendererProps) => {
+  const rrdSource = useMemo<RrdSource | null>(() => {
+    if (!ctx.media.url) {
+      return null;
+    }
+
+    return {
+      url: ctx.media.url,
+      identityKey: getRrdIdentityKey(ctx.media.url),
+    };
+  }, [ctx.media.url]);
+
+  return <RerunViewerContainer rrdSource={rrdSource} />;
 };
